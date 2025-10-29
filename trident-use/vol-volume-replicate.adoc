@@ -1,0 +1,327 @@
+---
+sidebar: sidebar 
+permalink: trident-use/vol-volume-replicate.html 
+keywords: snapmirror update, volume replication, TridentMirrorRelationship, TridentActionMirrorUpdate 
+summary: O Trident suporta a criação de relações de espelhamento entre volumes de origem e destino para replicar volumes em casos de recuperação de desastres. 
+---
+= Replicar volumes usando o SnapMirror
+:allow-uri-read: 
+
+
+[role="lead"]
+O Trident suporta relações de espelhamento entre um volume de origem em um cluster e o volume de destino no cluster emparelhado para replicação de dados em casos de recuperação de desastres.   Você pode usar uma Definição de Recurso Personalizado (CRD) com namespace, chamada Trident Mirror Relationship (TMR), para executar as seguintes operações:
+
+* Criar relações de espelhamento entre volumes (PVCs)
+* Remover relações de espelhamento entre volumes
+* Quebre os relacionamentos espelhados
+* Promover o volume secundário em situações de desastre (falhas).
+* Realizar a transição sem perda de dados de aplicações de um cluster para outro (durante failovers ou migrações planejadas).
+
+
+
+
+== Pré-requisitos para replicação
+
+Certifique-se de que os seguintes pré-requisitos sejam atendidos antes de começar:
+
+.Clusters ONTAP
+* * Trident*: A versão 22.10 ou posterior do Trident deve estar presente nos clusters Kubernetes de origem e destino que utilizam o ONTAP como backend.
+* *Licenças*: As licenças assíncronas do ONTAP SnapMirror que utilizam o pacote Data Protection devem estar habilitadas nos clusters ONTAP de origem e destino.  Consulte https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-licensing-concept.html["Visão geral do licenciamento do SnapMirror no ONTAP"^] para mais informações.
++
+A partir do ONTAP 9.10.1, todas as licenças são fornecidas como um arquivo de licença NetApp (NLF), que é um único arquivo que habilita vários recursos.  Consultelink:https://docs.netapp.com/us-en/ontap/system-admin/manage-licenses-concept.html#licenses-included-with-ontap-one["Licenças incluídas no ONTAP One"^] para mais informações.
+
++
+
+NOTE: Somente a proteção assíncrona SnapMirror é suportada.
+
+
+
+.Espionagem
+* *Cluster e SVM*: Os backends de armazenamento ONTAP devem estar interligados.  Consulte https://docs.netapp.com/us-en/ontap-sm-classic/peering/index.html["Visão geral do peering de clusters e SVMs"^] para mais informações.
++
+
+IMPORTANT: Certifique-se de que os nomes SVM usados ​​na relação de replicação entre dois clusters ONTAP sejam únicos.
+
+* * Trident e SVM*: Os SVMs remotos emparelhados devem estar disponíveis para o Trident no cluster de destino.
+
+
+.Motoristas com suporte
+O NetApp Trident oferece suporte à replicação de volumes com a tecnologia NetApp SnapMirror, utilizando classes de armazenamento com suporte dos seguintes drivers: ** `ontap-nas` : NFS ** `ontap-san` : iSCSI ** `ontap-san` : FC ** `ontap-san` : NVMe/TCP (requer versão mínima do ONTAP 9.15.1)
+
+
+NOTE: A replicação de volumes usando o SnapMirror não é compatível com sistemas ASA r2.  Para obter informações sobre sistemas ASA r2, consultelink:https://docs.netapp.com/us-en/asa-r2/get-started/learn-about.html["Saiba mais sobre os sistemas de armazenamento ASA r2"^] .
+
+
+
+== Crie um PVC espelhado
+
+Siga estes passos e utilize os exemplos de CRD para criar uma relação de espelhamento entre os volumes primário e secundário.
+
+.Passos
+. Execute os seguintes passos no cluster Kubernetes primário:
++
+.. Crie um objeto StorageClass com o `trident.netapp.io/replication: true` parâmetro.
++
+.Exemplo
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-nas
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "ontap-nas"
+  fsType: "nfs"
+  trident.netapp.io/replication: "true"
+----
+.. Crie um PVC com uma StorageClass criada anteriormente.
++
+.Exemplo
+[source, yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: csi-nas
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: csi-nas
+----
+.. Crie uma relação de espelhamento (MirrorRelationship) com informações locais.
++
+.Exemplo
+[source, yaml]
+----
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: csi-nas
+spec:
+  state: promoted
+  volumeMappings:
+  - localPVCName: csi-nas
+----
++
+O Trident obtém as informações internas do volume e o estado atual de proteção de dados (DP) do volume e, em seguida, preenche o campo de status do MirrorRelationship.
+
+.. Obtenha o CR TridentMirrorRelationship para obter o nome interno e o SVM do PVC.
++
+[listing]
+----
+kubectl get tmr csi-nas
+----
++
+[source, yaml]
+----
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: csi-nas
+  generation: 1
+spec:
+  state: promoted
+  volumeMappings:
+  - localPVCName: csi-nas
+status:
+  conditions:
+  - state: promoted
+    localVolumeHandle: "datavserver:trident_pvc_3bedd23c_46a8_4384_b12b_3c38b313c1e1"
+    localPVCName: csi-nas
+    observedGeneration: 1
+----
+
+
+. Execute os seguintes passos no cluster Kubernetes secundário:
++
+.. Crie uma StorageClass com o parâmetro trident.netapp.io/replication: true.
++
+.Exemplo
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-nas
+provisioner: csi.trident.netapp.io
+parameters:
+  trident.netapp.io/replication: true
+----
+.. Crie um relacionamento de espelhamento (MirrorRelationship) com informações de destino e origem.
++
+.Exemplo
+[source, yaml]
+----
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: csi-nas
+spec:
+  state: established
+  volumeMappings:
+  - localPVCName: csi-nas
+    remoteVolumeHandle: "datavserver:trident_pvc_3bedd23c_46a8_4384_b12b_3c38b313c1e1"
+----
++
+O Trident criará um relacionamento SnapMirror com o nome da política de relacionamento configurada (ou padrão para ONTAP) e o inicializará.
+
+.. Crie um PVC com uma StorageClass previamente criada para atuar como destino secundário (SnapMirror ).
++
+.Exemplo
+[source, yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: csi-nas
+  annotations:
+    trident.netapp.io/mirrorRelationship: csi-nas
+spec:
+  accessModes:
+  - ReadWriteMany
+resources:
+  requests:
+    storage: 1Gi
+storageClassName: csi-nas
+----
++
+O Trident verificará a existência do CRD TridentMirrorRelationship e não conseguirá criar o volume caso o relacionamento não exista.  Caso exista a relação, o Trident garantirá que o novo FlexVol volume seja colocado em uma SVM que esteja emparelhada com a SVM remota definida no MirrorRelationship.
+
+
+
+
+
+
+
+== Estados de replicação de volume
+
+Uma relação de espelhamento Trident (TMR, do inglês Trident Mirror Relationship) é um CRD (Componente de Referência Completa) que representa uma das extremidades de uma relação de replicação entre PVCs (Componentes Variáveis ​​Parciais).  O TMR de destino possui um estado, que informa ao Trident qual é o estado desejado.  O TMR de destino possui os seguintes estados:
+
+* *Estabelecido*: o PVC local é o volume de destino de uma relação de espelhamento, e esta é uma nova relação.
+* *Em destaque*: o PVC local é ReadWrite e pode ser montado, sem nenhuma relação de espelhamento em vigor no momento.
+* *Reestabelecido*: o PVC local é o volume de destino de uma relação de espelhamento e também estava anteriormente nessa relação de espelhamento.
++
+** O estado restabelecido deve ser usado se o volume de destino já teve alguma relação com o volume de origem, pois ele sobrescreve o conteúdo do volume de destino.
+** O estado restabelecido falhará se o volume não estiver previamente relacionado com a fonte.
+
+
+
+
+
+
+== Promover o PVC secundário durante uma falha não planejada.
+
+Execute a seguinte etapa no cluster Kubernetes secundário:
+
+* Atualize o campo _spec.state_ de TridentMirrorRelationship para `promoted` .
+
+
+
+
+== Promover o PVC secundário durante uma falha planejada
+
+Durante uma migração (failover) planejada, execute os seguintes passos para promover o PVC secundário:
+
+.Passos
+. No cluster Kubernetes primário, crie um snapshot do PVC e aguarde até que o snapshot seja criado.
+. No cluster Kubernetes primário, crie o CR SnapshotInfo para obter detalhes internos.
++
+.Exemplo
+[source, yaml]
+----
+kind: SnapshotInfo
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: csi-nas
+spec:
+  snapshot-name: csi-nas-snapshot
+----
+. No cluster Kubernetes secundário, atualize o campo _spec.state_ do CR _TridentMirrorRelationship_ para _promoted_ e o campo _spec.promotedSnapshotHandle_ para o nome interno do snapshot.
+. No cluster Kubernetes secundário, confirme o status (campo status.state) do TridentMirrorRelationship como promovido.
+
+
+
+
+== Restaurar uma relação de espelhamento após uma falha.
+
+Antes de restaurar a relação de espelhamento, escolha o lado que deseja definir como o novo lado principal.
+
+.Passos
+. No cluster Kubernetes secundário, verifique se os valores do campo _spec.remoteVolumeHandle_ no TridentMirrorRelationship estão atualizados.
+. No cluster Kubernetes secundário, atualize o campo _spec.mirror_ do TridentMirrorRelationship para `reestablished` .
+
+
+
+
+== Operações adicionais
+
+O Trident suporta as seguintes operações nos volumes primário e secundário:
+
+
+
+=== Replicar o PVC primário em um novo PVC secundário.
+
+Certifique-se de já possuir um tubo de PVC primário e um tubo de PVC secundário.
+
+.Passos
+. Exclua os CRDs PersistentVolumeClaim e TridentMirrorRelationship do cluster secundário (de destino) estabelecido.
+. Exclua o CRD TridentMirrorRelationship do cluster primário (de origem).
+. Crie um novo CRD TridentMirrorRelationship no cluster primário (de origem) para o novo PVC secundário (de destino) que você deseja estabelecer.
+
+
+
+
+=== Redimensionar um PVC espelhado, primário ou secundário
+
+O PVC pode ser redimensionado normalmente; o ONTAP expandirá automaticamente qualquer flexbox de destino se a quantidade de dados exceder o tamanho atual.
+
+
+
+=== Remover a replicação de um PVC
+
+Para remover a replicação, execute uma das seguintes operações no volume secundário atual:
+
+* Exclua o MirrorRelationship no PVC secundário.  Isso rompe a relação de replicação.
+* Ou, atualize o campo spec.state para _promoted_.
+
+
+
+
+=== Excluir um PVC (que foi previamente espelhado)
+
+O Trident verifica se há PVCs replicados e libera a relação de replicação antes de tentar excluir o volume.
+
+
+
+=== Excluir um TMR
+
+A exclusão de um TMR em um dos lados de um relacionamento espelhado faz com que o TMR restante passe para o estado _promovido_ antes que o Trident conclua a exclusão.  Se o TMR selecionado para exclusão já estiver no estado _promovido_, não haverá relação de espelhamento existente e o TMR será removido, e o Trident promoverá o PVC local para _Leitura/Gravação_.  Essa exclusão libera os metadados do SnapMirror para o volume local no ONTAP.  Caso este volume seja utilizado em uma relação de espelhamento no futuro, será necessário usar um novo TMR com um estado de replicação de volume _estabelecido_ ao criar a nova relação de espelhamento.
+
+
+
+== Atualize os relacionamentos de espelhamento quando o ONTAP estiver online.
+
+As relações de espelhamento podem ser atualizadas a qualquer momento após serem estabelecidas.  Você pode usar o `state: promoted` ou `state: reestablished` campos para atualizar os relacionamentos.  Ao promover um volume de destino para um volume ReadWrite regular, você pode usar _promotedSnapshotHandle_ para especificar um snapshot específico para restaurar o volume atual.
+
+
+
+== Atualizar relações de espelhamento quando o ONTAP estiver offline
+
+Você pode usar um CRD para executar uma atualização do SnapMirror sem que o Trident tenha conectividade direta com o cluster ONTAP .  Consulte o seguinte exemplo de formato do TridentActionMirrorUpdate:
+
+.Exemplo
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentActionMirrorUpdate
+metadata:
+  name: update-mirror-b
+spec:
+  snapshotHandle: "pvc-1234/snapshot-1234"
+  tridentMirrorRelationshipName: mirror-b
+----
+`status.state`Reflete o estado do CRD TridentActionMirrorUpdate.  Pode assumir um valor entre _Succeeded_, _In Progress_ ou _Failed_.

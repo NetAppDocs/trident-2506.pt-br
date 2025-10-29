@@ -1,0 +1,66 @@
+---
+sidebar: sidebar 
+permalink: trident-reference/rest-api.html 
+keywords: rest api, get, post, json, object, backends 
+summary: Você pode usar o endpoint REST diretamente, caso prefira interagir com a API REST do Trident. 
+---
+= API REST Trident
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Enquantolink:tridentctl.html["Comandos e opções do tridentctl"] A maneira mais fácil de interagir com a API REST do Trident é por meio de métodos alternativos; você também pode usar o endpoint REST diretamente, se preferir.
+
+
+
+== Quando usar a API REST
+
+A API REST é útil para instalações avançadas que usam o Trident como um binário independente em implantações que não utilizam Kubernetes.
+
+Para maior segurança, o Trident `REST API` Por padrão, o acesso é restrito ao localhost quando executado dentro de um pod.  Para alterar esse comportamento, você precisa configurar o Trident. `-address` argumento em sua configuração de pod.
+
+
+
+== Utilizando a API REST
+
+Para exemplos de como essas APIs são chamadas, passe o parâmetro debug.(`-d` ) bandeira.  Para obter mais informações, consultelink:../trident-managing-k8s/tridentctl.html["Gerencie o Trident usando o tridentctl"] .
+
+A API funciona da seguinte forma:
+
+
+
+=== PEGAR
+
+`GET <trident-address>/trident/v1/<object-type>`:: Lista todos os objetos desse tipo.
+`GET <trident-address>/trident/v1/<object-type>/<object-name>`:: Obtém os detalhes do objeto nomeado.
+
+
+
+
+=== PUBLICAR
+
+`POST <trident-address>/trident/v1/<object-type>`:: Cria um objeto do tipo especificado.
++
+--
+* Requer uma configuração JSON para que o objeto seja criado.  Para obter a especificação de cada tipo de objeto, consultelink:../trident-managing-k8s/tridentctl.html["Gerencie o Trident usando o tridentctl"] .
+* Se o objeto já existir, o comportamento varia: os servidores atualizam o objeto existente, enquanto todos os outros tipos de objeto terão a operação falhada.
+
+
+--
+
+
+
+
+=== EXCLUIR
+
+`DELETE <trident-address>/trident/v1/<object-type>/<object-name>`:: Exclui o recurso especificado.
++
+--
+
+NOTE: Os volumes associados a backends ou classes de armazenamento continuarão a existir; estes devem ser excluídos separadamente.  Para obter mais informações, consultelink:../trident-managing-k8s/tridentctl.html["Gerencie o Trident usando o tridentctl"] .
+
+--
+

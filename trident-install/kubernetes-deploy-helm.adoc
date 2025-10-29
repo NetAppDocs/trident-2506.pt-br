@@ -1,0 +1,268 @@
+---
+sidebar: sidebar 
+permalink: trident-get-started/kubernetes-deploy-helm.html 
+keywords: deploy, Trident, operator, helm, helm chart, configuration, values, standard, registry 
+summary: Você pode implantar o operador Trident e instalar o Trident usando o Helm.  Este processo aplica-se a instalações onde as imagens de contêiner exigidas pelo Trident não estão armazenadas em um registro privado. 
+---
+= Implantar operador Trident usando Helm (modo padrão)
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Você pode implantar o operador Trident e instalar o Trident usando o Helm.  Este processo aplica-se a instalações onde as imagens de contêiner exigidas pelo Trident não estão armazenadas em um registro privado.  Se você tiver um registro de imagens privado, use olink:kubernetes-deploy-helm-mirror.html["processo para implantação offline"] .
+
+
+
+== Informações críticas sobre o Trident 25.06
+
+*Você deve ler as seguintes informações críticas sobre Trident.*
+
+.<strong>Informações críticas sobre o Trident</strong>
+[%collapsible%open]
+====
+[]
+=====
+* O Kubernetes 1.34 agora é compatível com o Trident. Atualize o Trident antes de atualizar o Kubernetes.
+* A Trident impõe rigorosamente o uso da configuração de multipathing em ambientes SAN, com um valor recomendado de `find_multipaths: no` no arquivo multipath.conf.
++
+Utilização de configuração sem multipathing ou utilização de `find_multipaths: yes` ou `find_multipaths: smart` O valor no arquivo multipath.conf resultará em falhas de montagem.  A Trident recomendou o uso de `find_multipaths: no` desde a versão de 21/07.
+
+
+
+=====
+====
+
+
+== Implante o operador Trident e instale o Trident usando o Helm.
+
+Usando o Tridentlink:https://artifacthub.io/packages/helm/netapp-trident/trident-operator["Carta do leme"^] Você pode implantar o operador Trident e instalar o Trident em uma única etapa.
+
+Análiselink:../trident-get-started/kubernetes-deploy.html["visão geral da instalação"] Para garantir que você atendeu aos pré-requisitos de instalação e selecionou a opção de instalação correta para o seu ambiente.
+
+.Antes de começar
+Além dolink:../trident-get-started/kubernetes-deploy.html#before-you-deploy["pré-requisitos de implantação"] você precisalink:https://v3.helm.sh/["Helm versão 3"^] .
+
+.Passos
+. Adicione o repositório Trident Helm:
++
+[listing]
+----
+helm repo add netapp-trident https://netapp.github.io/trident-helm-chart
+----
+. Usar `helm install` e especifique um nome para sua implantação, como no exemplo a seguir, onde `100.2506.0` é a versão do Trident que você está instalando.
++
+[listing]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0 --create-namespace --namespace <trident-namespace>
+----
++
+
+NOTE: Se você já criou um namespace para o Trident, o `--create-namespace` O parâmetro não criará um namespace adicional.
+
+
+
+Você pode usar `helm list` Para analisar detalhes da instalação, como nome, namespace, gráfico, status, versão do aplicativo e número da revisão.
+
+
+
+== Passe os dados de configuração durante a instalação.
+
+Existem duas maneiras de passar dados de configuração durante a instalação:
+
+[cols="2"]
+|===
+| Opção | Descrição 
+
+
+| `--values`(ou `-f` )  a| 
+Especifique um arquivo YAML com as configurações personalizadas.  Isso pode ser especificado várias vezes e o arquivo mais à direita terá precedência.
+
+
+
+| `--set`  a| 
+Especifique as configurações alternativas na linha de comando.
+
+|===
+Por exemplo, para alterar o valor padrão de `debug` , execute o seguinte comando onde `100.2506.0` Esta é a versão do Trident que você está instalando:
+
+[listing]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0  --create-namespace --namespace trident --set tridentDebug=true
+----
+
+
+== Opções de configuração
+
+Esta tabela e a `values.yaml` O arquivo, que faz parte do gráfico Helm, fornece a lista de chaves e seus valores padrão.
+
+[cols="1,2,3"]
+|===
+| Opção | Descrição | Padrão 
+
+
+| `nodeSelector` | Rótulos de nós para atribuição de pods |  
+
+
+| `podAnnotations` | Anotações de pods |  
+
+
+| `deploymentAnnotations` | Anotações de implantação |  
+
+
+| `tolerations` | Tolerâncias para atribuição de pods |  
+
+
+| `affinity` | Afinidade pela atribuição de cápsulas  a| 
+[listing]
+----
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+              - arm64
+              - amd64
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+----
+
+WARNING: Não remova a afinidade padrão do arquivo values.yaml.  Quando você quiser fornecer uma afinidade personalizada, estenda a afinidade padrão.
+
+
+
+| `tridentControllerPluginNodeSelector` | Seletores de nós adicionais para pods. Consulte <<Entendendo os pods do controlador e os pods do nó>> para mais detalhes. |  
+
+
+| `tridentControllerPluginTolerations` | Substitui as tolerâncias do Kubernetes para pods. Consulte <<Entendendo os pods do controlador e os pods do nó>> para mais detalhes. |  
+
+
+| `tridentNodePluginNodeSelector` | Seletores de nós adicionais para pods. Consulte <<Entendendo os pods do controlador e os pods do nó>> para mais detalhes. |  
+
+
+| `tridentNodePluginTolerations` | Substitui as tolerâncias do Kubernetes para pods. Consulte <<Entendendo os pods do controlador e os pods do nó>> para mais detalhes. |  
+
+
+| `imageRegistry` | Identifica o registro para o `trident-operator` , `trident` e outras imagens.  Deixe em branco para aceitar o valor padrão.  IMPORTANTE: Ao instalar o Trident em um repositório privado, se você estiver usando o `imageRegistry` Para especificar a localização do repositório, não use a opção `--change`. `/netapp/` no caminho do repositório. | `""` 
+
+
+| `imagePullPolicy` | Define a política de extração de imagens para o `trident-operator` . | `IfNotPresent` 
+
+
+| `imagePullSecrets` | Define os segredos de extração de imagens para o `trident-operator` , `trident` e outras imagens. |  
+
+
+| `kubeletDir` | Permite substituir a localização do host do estado interno do kubelet. | `"/var/lib/kubelet"` 
+
+
+| `operatorLogLevel` | Permite definir o nível de registro do operador Trident para: `trace` , `debug` , `info` , `warn` , `error` , ou `fatal` . | `"info"` 
+
+
+| `operatorDebug` | Permite definir o nível de registro do operador Trident como depuração. | `true` 
+
+
+| `operatorImage` | Permite a substituição completa da imagem para `trident-operator` . | `""` 
+
+
+| `operatorImageTag` | Permite sobrescrever a tag do `trident-operator` imagem. | `""` 
+
+
+| `tridentIPv6` | Permite habilitar o Trident para funcionar em clusters IPv6. | `false` 
+
+
+| `tridentK8sTimeout` | Substitui o tempo limite padrão de 30 segundos para a maioria das operações da API do Kubernetes (se diferente de zero, em segundos). | `0` 
+
+
+| `tridentHttpRequestTimeout` | Substitui o tempo limite padrão de 90 segundos para as solicitações HTTP, com `0s` sendo uma duração infinita para o tempo limite.  Valores negativos não são permitidos. | `"90s"` 
+
+
+| `tridentSilenceAutosupport` | Permite desativar o relatório periódico do AutoSupport do Trident . | `false` 
+
+
+| `tridentAutosupportImageTag` | Permite substituir a tag da imagem para o contêiner Trident AutoSupport . | `<version>` 
+
+
+| `tridentAutosupportProxy` | Permite que o contêiner Trident AutoSupport se comunique com servidores externos através de um proxy HTTP. | `""` 
+
+
+| `tridentLogFormat` | Define o formato de registro do Trident.(`text` ou `json` ). | `"text"` 
+
+
+| `tridentDisableAuditLog` | Desativa o registrador de auditoria do Trident . | `true` 
+
+
+| `tridentLogLevel` | Permite definir o nível de registro do Trident para: `trace` , `debug` , `info` , `warn` , `error` , ou `fatal` . | `"info"` 
+
+
+| `tridentDebug` | Permite definir o nível de registro do Trident para `debug` . | `false` 
+
+
+| `tridentLogWorkflows` | Permite que fluxos de trabalho específicos do Trident sejam habilitados para registro de rastreamento ou supressão de logs. | `""` 
+
+
+| `tridentLogLayers` | Permite que camadas específicas do Trident sejam ativadas para registro de rastreamento ou supressão de logs. | `""` 
+
+
+| `tridentImage` | Permite a substituição completa da imagem para o Trident. | `""` 
+
+
+| `tridentImageTag` | Permite sobrescrever a tag da imagem para o Trident. | `""` 
+
+
+| `tridentProbePort` | Permite alterar a porta padrão usada para as sondagens de atividade/prontidão do Kubernetes. | `""` 
+
+
+| `windows` | Permite a instalação do Trident em nós de trabalho Windows. | `false` 
+
+
+| `enableForceDetach` | Permite ativar a função de desprendimento forçado. | `false` 
+
+
+| `excludePodSecurityPolicy` | Exclui a política de segurança do pod do operador da criação. | `false` 
+
+
+| `cloudProvider` | Definir para `"Azure"` Ao usar identidades gerenciadas ou uma identidade na nuvem em um cluster AKS.  Defina como "AWS" ao usar uma identidade de nuvem em um cluster EKS. | `""` 
+
+
+| `cloudIdentity` | Defina a identidade da carga de trabalho ("azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx") ao usar a identidade da nuvem em um cluster AKS.  Defina a função do AWS IAM ("'eks.amazonaws.com/role-arn: arn:aws:iam::123456:role/trident-role'") ao usar a identidade na nuvem em um cluster EKS. | `""` 
+
+
+| `iscsiSelfHealingInterval` | O intervalo em que a autorrecuperação do iSCSI é acionada. | `5m0s` 
+
+
+| `iscsiSelfHealingWaitTime` | Duração após a qual a autorrecuperação do iSCSI inicia uma tentativa de resolver uma sessão inativa, realizando um logout e um login subsequente. | `7m0s` 
+
+
+| `nodePrep` | Permite que o Trident prepare os nós do cluster Kubernetes para gerenciar volumes usando o protocolo de armazenamento de dados especificado. *Atualmente, `iscsi` é o único valor suportado.* OBSERVAÇÃO: A partir do OpenShift 4.19, a versão mínima do Trident suportada para esse recurso é 25.06.1. |  
+
+
+| `enableConcurrency`  a| 
+Permite operações simultâneas do controlador Trident para melhor rendimento.
+
+
+NOTE: *Visualização técnica*: Este recurso é experimental no NetApp Trident 25.06 e atualmente oferece suporte a fluxos de trabalho paralelos limitados com o driver ONTAP-SAN (protocolos iSCSI e FCP).
+| falso 
+
+
+| `k8sAPIQPS`  a| 
+O limite de consultas por segundo (QPS) usado pelo controlador durante a comunicação com o servidor da API do Kubernetes. O valor de Burst é definido automaticamente com base no valor QPS.
+| `100`; opcional 
+|===
+
+
+=== Entendendo os pods do controlador e os pods do nó
+
+O Trident é executado como um único pod de controlador, além de um pod de nó em cada nó de trabalho do cluster.  O pod do nó deve estar em execução em qualquer host onde você queira potencialmente montar um volume Trident .
+
+Kuberneteslink:https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/["seletores de nós"^] elink:https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/["tolerâncias e contaminações"^] São utilizadas para restringir a execução de um pod a um nó específico ou preferencial.  Usando o `ControllerPlugin` e `NodePlugin` Você pode especificar restrições e substituições.
+
+* O plugin do controlador lida com o provisionamento e gerenciamento de volumes, como snapshots e redimensionamento.
+* O plugin do nó gerencia a conexão do armazenamento ao nó.
+

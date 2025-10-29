@@ -1,0 +1,100 @@
+---
+sidebar: sidebar 
+permalink: trident-use/manage-stor-class.html 
+keywords: storage class, manage storage class, storage classes, kubernetes storage classes 
+summary: Você pode visualizar as classes de armazenamento existentes, definir uma classe de armazenamento padrão, identificar o backend da classe de armazenamento e excluir classes de armazenamento. 
+---
+= Gerenciar classes de armazenamento
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Você pode visualizar as classes de armazenamento existentes, definir uma classe de armazenamento padrão, identificar o backend da classe de armazenamento e excluir classes de armazenamento.
+
+
+
+== Veja as classes de armazenamento existentes.
+
+* Para visualizar as classes de armazenamento do Kubernetes existentes, execute o seguinte comando:
+
+
+[listing]
+----
+kubectl get storageclass
+----
+* Para visualizar os detalhes da classe de armazenamento do Kubernetes, execute o seguinte comando:
+
+
+[listing]
+----
+kubectl get storageclass <storage-class> -o json
+----
+* Para visualizar as classes de armazenamento sincronizadas do Trident, execute o seguinte comando:
+
+
+[listing]
+----
+tridentctl get storageclass
+----
+* Para visualizar os detalhes da classe de armazenamento sincronizado do Trident, execute o seguinte comando:
+
+
+[listing]
+----
+tridentctl get storageclass <storage-class> -o json
+----
+
+
+== Defina uma classe de armazenamento padrão.
+
+O Kubernetes 1.6 adicionou a capacidade de definir uma classe de armazenamento padrão.  Esta é a classe de armazenamento que será usada para provisionar um Volume Persistente caso o usuário não especifique uma em uma Solicitação de Volume Persistente (PVC).
+
+* Defina uma classe de armazenamento padrão configurando a anotação. `storageclass.kubernetes.io/is-default-class` para verdadeiro na definição da classe de armazenamento.  De acordo com a especificação, qualquer outro valor ou a ausência da anotação é interpretada como falsa.
+* Você pode configurar uma classe de armazenamento existente para ser a classe de armazenamento padrão usando o seguinte comando:
+
+
+[listing]
+----
+kubectl patch storageclass <storage-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+----
+* Da mesma forma, você pode remover a anotação da classe de armazenamento padrão usando o seguinte comando:
+
+
+[listing]
+----
+kubectl patch storageclass <storage-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+----
+Existem também exemplos no pacote de instalação do Trident que incluem essa anotação.
+
+
+NOTE: Deve haver apenas uma classe de armazenamento padrão em seu cluster por vez.  Tecnicamente, o Kubernetes não impede que você tenha mais de uma classe de armazenamento, mas ele se comportará como se não houvesse nenhuma classe de armazenamento padrão.
+
+
+
+== Identifique o backend para uma classe de armazenamento.
+
+Este é um exemplo do tipo de pergunta que você pode responder com o JSON que `tridentctl` Saídas para objetos do backend Trident .  Isso usa o `jq` utilitário, que você talvez precise instalar primeiro.
+
+[listing]
+----
+tridentctl get storageclass -o json | jq  '[.items[] | {storageClass: .Config.name, backends: [.storage]|unique}]'
+----
+
+
+== Excluir uma classe de armazenamento
+
+Para excluir uma classe de armazenamento do Kubernetes, execute o seguinte comando:
+
+[listing]
+----
+kubectl delete storageclass <storage-class>
+----
+`<storage-class>`deve ser substituído pela sua classe de armazenamento.
+
+Quaisquer volumes persistentes criados por meio dessa classe de armazenamento permanecerão intactos e o Trident continuará a gerenciá-los.
+
+
+NOTE: Trident impõe um vazio `fsType` pelos volumes que gera.  Para backends iSCSI, recomenda-se impor `parameters.fsType` na classe de armazenamento.  Você deve excluir as StorageClasses existentes e recriá-las com `parameters.fsType` especificado.

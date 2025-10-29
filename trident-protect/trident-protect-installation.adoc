@@ -1,0 +1,136 @@
+---
+sidebar: sidebar 
+permalink: trident-protect/trident-protect-installation.html 
+keywords: install, trident, protect, requirements, registry 
+summary: Se o seu ambiente atender aos requisitos, você pode seguir estas etapas para instalar o Trident Protect. 
+---
+= Instale e configure o Trident Protect.
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Se o seu ambiente atender aos requisitos do Trident Protect, você pode seguir estas etapas para instalar o Trident Protect em seu cluster.  Você pode obter o Trident Protect da NetApp ou instalá-lo a partir do seu próprio registro privado.  A instalação a partir de um registro privado é útil caso seu cluster não tenha acesso à Internet.
+
+
+
+== Instale o Trident Protect.
+
+[role="tabbed-block"]
+====
+.Instale o Trident Protect da NetApp.
+--
+.Passos
+. Adicione o repositório Trident Helm:
++
+[source, console]
+----
+helm repo add netapp-trident-protect https://netapp.github.io/trident-protect-helm-chart
+----
+. Use o Helm para instalar o Trident Protect.  Substituir `<name-of-cluster>` com um nome de cluster, que será atribuído ao cluster e usado para identificar os backups e snapshots do cluster:
++
+[source, console]
+----
+helm install trident-protect netapp-trident-protect/trident-protect --set clusterName=<name-of-cluster> --version 100.2506.0 --create-namespace --namespace trident-protect
+----
+
+
+--
+.Instale o Trident Protect a partir de um registro privado.
+--
+Você pode instalar o Trident Protect a partir de um registro de imagens privado caso seu cluster Kubernetes não tenha acesso à Internet.  Nestes exemplos, substitua os valores entre colchetes por informações do seu ambiente:
+
+.Passos
+. Baixe as seguintes imagens para sua máquina local, atualize as tags e, em seguida, envie-as para seu registro privado:
++
+[source, console]
+----
+netapp/controller:25.06.0
+netapp/restic:25.06.0
+netapp/kopia:25.06.0
+netapp/trident-autosupport:25.06.0
+netapp/exechook:25.06.0
+netapp/resourcebackup:25.06.0
+netapp/resourcerestore:25.06.0
+netapp/resourcedelete:25.06.0
+bitnami/kubectl:1.30.2
+kubebuilder/kube-rbac-proxy:v0.16.0
+----
++
+Por exemplo:
+
++
+[source, console]
+----
+docker pull netapp/controller:25.06.0
+----
++
+[source, console]
+----
+docker tag netapp/controller:25.06.0 <private-registry-url>/controller:25.06.0
+----
++
+[source, console]
+----
+docker push <private-registry-url>/controller:25.06.0
+----
+. Crie o namespace do sistema Trident Protect:
++
+[source, console]
+----
+kubectl create ns trident-protect
+----
+. Faça login no registro:
++
+[source, console]
+----
+helm registry login <private-registry-url> -u <account-id> -p <api-token>
+----
+. Crie um segredo de pull para usar na autenticação de registro privado:
++
+[source, console]
+----
+kubectl create secret docker-registry regcred --docker-username=<registry-username> --docker-password=<api-token> -n trident-protect --docker-server=<private-registry-url>
+----
+. Adicione o repositório Trident Helm:
++
+[source, console]
+----
+helm repo add netapp-trident-protect https://netapp.github.io/trident-protect-helm-chart
+----
+. Crie um arquivo chamado `protectValues.yaml` .  Certifique-se de que contenha as seguintes configurações do Trident Protect:
++
+[source, yaml]
+----
+---
+image:
+  registry: <private-registry-url>
+imagePullSecrets:
+  - name: regcred
+controller:
+  image:
+    registry: <private-registry-url>
+rbacProxy:
+  image:
+    registry: <private-registry-url>
+crCleanup:
+  imagePullSecrets:
+    - name: regcred
+webhooksCleanup:
+  imagePullSecrets:
+    - name: regcred
+----
+. Use o Helm para instalar o Trident Protect.  Substituir `<name_of_cluster>` com um nome de cluster, que será atribuído ao cluster e usado para identificar os backups e snapshots do cluster:
++
+[source, console]
+----
+helm install trident-protect netapp-trident-protect/trident-protect --set clusterName=<name_of_cluster> --version 100.2506.0 --create-namespace --namespace trident-protect -f protectValues.yaml
+----
+
+
+--
+====

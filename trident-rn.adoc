@@ -1,0 +1,978 @@
+---
+sidebar: sidebar 
+permalink: trident-rn.html 
+keywords: 'what"s new, new features, enhancements, known issues, resolved issues, troubleshooting' 
+summary: A NetApp está continuamente melhorando e aprimorando seus produtos e serviços. Aqui estão algumas das funcionalidades, melhorias e correções de bugs mais recentes da versão mais recente do Trident. 
+---
+= O que há de novo
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ./media/
+
+
+[role="lead"]
+As notas de versão fornecem informações sobre novos recursos, melhorias e correções de bugs na versão mais recente do NetApp Trident.
+
+
+WARNING: O `tridentctl` O binário para Linux fornecido no arquivo zip do instalador é a versão testada e suportada.  Esteja ciente de que `macos` binário fornecido no `/extras` Parte do arquivo zip não foi testada nem é suportada.
+
+
+
+== Novidades em 25.06.2
+
+O resumo "Novidades" fornece detalhes sobre melhorias, correções e itens descontinuados para as versões do Trident e do Trident Protect.
+
+
+
+=== Trident
+
+
+
+==== Correções
+
+* *Kubernetes*: Corrigido um problema crítico em que dispositivos iSCSI incorretos eram descobertos ao desanexar volumes de nós do Kubernetes.
+
+
+
+
+== Mudanças em 25.06.1
+
+
+
+=== Trident
+
+
+IMPORTANT: Para clientes que usam o SolidFire, não atualizem para a versão 25.06.1 devido a um problema conhecido ao cancelar a publicação de volumes. A versão 25.06.2 será lançada em breve para resolver esse problema.
+
+
+
+==== Correções
+
+* *Kubernetes*:
++
+** Corrigido um problema em que os NQNs não eram verificados antes de serem desmapeados dos subsistemas.
+** Corrigido um problema em que várias tentativas de fechar um dispositivo LUKS levavam a falhas na desanexação de volumes.
+** Corrigido o problema de desempacotamento do volume iSCSI quando o caminho do dispositivo foi alterado desde sua criação.
+** Clonagem de blocos de volumes em classes de armazenamento.
+
+
+* *OpenShift*: Corrigido um problema em que a preparação do nó iSCSI falhava com o OCP 4.19.
+* Aumentamos o tempo limite ao clonar um volume usando backends SolidFire (link:https://github.com/NetApp/trident/issues/1008["Edição nº 1008"] ).
+
+
+
+
+== Mudanças em 25.06
+
+
+
+=== Trident
+
+
+
+==== Melhorias
+
+* *Kubernetes*:
++
+** Adicionado suporte para snapshots de grupos de volumes CSI com `v1beta1` Instantâneo de grupo de volumes APIs do Kubernetes para ONTAP- driver iSCSI SAN. Verlink:https://docs.netapp.com/us-en/trident/trident-use/vol-group-snapshots.html["Trabalhar com snapshots de grupos de volumes"^] .
++
+
+NOTE: VolumeGroupSnapshot é um recurso beta do Kubernetes com APIs beta.  O Kubernetes 1.32 é a versão mínima necessária para o VolumeGroupSnapshot.
+
+** Adicionado suporte para ONTAP ASA r2 para NVMe/TCP além de iSCSI. Verlink:link:https://docs.netapp.com/us-en/trident/trident-use/ontap-san-examples.html["Opções e exemplos de configuração do ONTAP SAN"^] .
+** Adicionado suporte seguro para SMB em volumes ONTAP-NAS e ONTAP-NAS-Economy.  Agora é possível usar usuários e grupos do Active Directory com volumes SMB para maior segurança. Verlink:https://docs.netapp.com/us-en/trident/trident-use/ontap-nas-prep.html#enable-secure-smb["Ativar SMB seguro"^] .
+** Concorrência aprimorada de nós Trident para maior escalabilidade nas operações de nós para volumes iSCSI.
+** Adicionado `--allow-discards` Ao abrir volumes LUKS, é necessário permitir comandos de descarte/TRIM para recuperação de espaço.
+** Desempenho aprimorado na formatação de volumes criptografados com LUKS.
+** Limpeza aprimorada de dispositivos LUKS com falha, mas parcialmente formatados.
+** Idempotência aprimorada do nó Trident para conexão e desconexão de volumes NVMe.
+** Adicionado `internalID` campo para a configuração de volume Trident para o driver ONTAP-SAN-Economy.
+** Adicionado suporte para replicação de volumes com SnapMirror para backends NVMe. Verlink:https://docs.netapp.com/us-en/trident/trident-use/vol-volume-replicate.html["Replicar volumes usando o SnapMirror"^] .
+
+
+
+
+
+
+==== Aprimoramentos experimentais
+
+
+NOTE: Não deve ser utilizado em ambientes de produção.
+
+* [Prévia Técnica] Habilitou operações simultâneas do controlador Trident através do `--enable-concurrency` sinalizador de recurso.  Isso permite que as operações do controlador sejam executadas em paralelo, melhorando o desempenho em ambientes movimentados ou de grande porte.
++
+
+NOTE: Este recurso é experimental e atualmente suporta fluxos de trabalho paralelos limitados com o driver ONTAP-SAN (protocolos iSCSI e FCP).
+
+* [Prévia Técnica] Adicionado suporte manual a QoS com o driver ANF.
+
+
+
+
+==== Correções
+
+* *Kubernetes*:
++
+** Corrigido um problema com o CSI NodeExpandVolume em que dispositivos multipath podiam ficar com tamanhos incongruentes quando os discos SCSI subjacentes não estavam disponíveis.
+** Corrigido o problema que impedia a limpeza de políticas de exportação duplicadas para os drivers ONTAP-NAS e ONTAP-NAS-Economy.
+** Corrigido o problema em que os volumes GCNV usavam NFSv3 por padrão quando... `nfsMountOptions` está desativado; agora os protocolos NFSv3 e NFSv4 são suportados.  Se `nfsMountOptions` Caso não seja fornecida uma versão específica do NFS, será utilizada a versão padrão do host (NFSv3 ou NFSv4).
+** Problema de implantação corrigido ao instalar o Trident usando o Kustomize (link:https://github.com/NetApp/trident/issues/831["Edição nº 831"] ).
+** Corrigidas as políticas de exportação ausentes para PVCs criados a partir de snapshots (link:https://github.com/NetApp/trident/issues/1016["Edição nº 1016"] ).
+** Corrigido o problema em que os tamanhos de volume do ANF não eram alinhados automaticamente em incrementos de 1 GiB.
+** Problema resolvido ao usar NFSv3 com Bottlerocket.
+
+
+* Tempo limite corrigido ao clonar um volume usando backends SolidFire (link:https://github.com/NetApp/trident/issues/1008["Edição nº 1008"] ).
+* Corrigido problema com volumes ONTAP-NAS-Economy que expandiam até 300 TB apesar de falhas de redimensionamento.
+* Corrigido um problema em que as operações de divisão de clones eram realizadas de forma síncrona ao usar a API REST do ONTAP .
+
+
+
+
+==== Descontinuações:
+
+* *Kubernetes*: Atualização da versão mínima do Kubernetes suportada para a v1.27.
+
+
+
+
+=== Trident protege
+
+O NetApp Trident Protect fornece recursos avançados de gerenciamento de dados de aplicativos que aprimoram a funcionalidade e a disponibilidade de aplicativos Kubernetes com estado, apoiados pelos sistemas de armazenamento NetApp ONTAP e pelo provisionador de armazenamento NetApp Trident CSI.
+
+
+
+==== Melhorias
+
+* Tempos de restauração aprimorados, oferecendo a opção de realizar backups completos com maior frequência.
+* Melhoria na granularidade da definição de aplicativos e restauração seletiva com filtragem por Grupo-Versão-Tipo (GVK).
+* Ressincronização e replicação reversa eficientes ao usar o AppMirrorRelationship (AMR) com o NetApp SnapMirror, para evitar a replicação completa do PVC.
+* Adicionada a capacidade de usar a identidade do Pod do EKS para criar buckets do AppVault, eliminando a necessidade de especificar um segredo com as credenciais do bucket para clusters EKS.
+* Adicionada a capacidade de ignorar a restauração de rótulos e anotações no namespace de restauração, se necessário.
+* O AppMirrorRelationship (AMR) agora verificará a expansão do PVC de origem e realizará a expansão apropriada no PVC de destino, conforme necessário.
+
+
+
+
+==== Correções
+
+* Corrigido um bug em que os valores de anotação de snapshots anteriores estavam sendo aplicados a snapshots mais recentes.  Todas as anotações de instantâneo agora estão aplicadas corretamente.
+* Definida uma chave secreta para criptografia do movimentador de dados (Kopia/Restic) por padrão, caso não esteja definida.
+* Adicionadas melhorias na validação e nas mensagens de erro para a criação do App Vault no S3.
+* O AppMirrorRelationship (AMR) agora replica apenas os PVs no estado Bound, para evitar tentativas falhas.
+* Corrigido um problema que exibia erros ao obter o conteúdo do AppVault em um AppVault com um grande número de backups.
+* Os snapshots de máquinas virtuais (VMSnapshots) do KubeVirt são excluídos das operações de restauração e failover para evitar falhas.
+* Corrigido um problema no Kopia em que os snapshots estavam sendo removidos prematuramente devido à programação de retenção padrão do Kopia estar sobrescrevendo a programação definida pelo usuário.
+
+
+
+
+== Mudanças em 25.02.1
+
+
+
+=== Trident
+
+
+
+==== Correções
+
+* *Kubernetes*:
++
+** Corrigido um problema no trident-operator onde os nomes e versões das imagens sidecar eram preenchidos incorretamente ao usar um registro de imagens não padrão (link:https://github.com/NetApp/trident/issues/983["Edição nº 983"] ).
+** Corrigido o problema em que as sessões multipath não conseguiam se recuperar durante uma devolução de failover do ONTAP (link:https://github.com/NetApp/trident/issues/961["Edição nº 961"] ).
+
+
+
+
+
+
+== Mudanças em 25.02
+
+A partir da versão 25.02 do Trident , o resumo "Novidades" fornece detalhes sobre melhorias, correções e descontinuações tanto para o Trident quanto para o Trident Protect.
+
+
+
+=== Trident
+
+
+
+==== Melhorias
+
+* *Kubernetes*:
++
+** Adicionado suporte para ONTAP ASA r2 para iSCSI.
+** Adicionado suporte para desanexação forçada de volumes ONTAP-NAS durante cenários de desligamento não controlado do nó.  Os novos volumes ONTAP-NAS agora utilizarão políticas de exportação por volume gerenciadas pelo Trident.  Foi fornecido um caminho de atualização para que os volumes existentes migrassem para o novo modelo de política de exportação ao cancelar a publicação, sem afetar as cargas de trabalho ativas.
+** Adicionada anotação cloneFromSnapshot.
+** Adicionado suporte para clonagem de volumes entre namespaces diferentes.
+** Recursos aprimorados de autorrecuperação em varreduras iSCSI permitem iniciar novas varreduras com base no host, canal, alvo e ID de LUN exatos.
+** Adicionado suporte para Kubernetes 1.32.
+
+
+* *OpenShift*:
++
+** Adicionado suporte para preparação automática de nós iSCSI para RHCOS em clusters ROSA.
+** Adicionado suporte para drivers de virtualização OpenShift para ONTAP .
+
+
+* Adicionado suporte a Fibre Channel no driver ONTAP-SAN.
+* Adicionado suporte a NVMe LUKS.
+* Alterei a imagem base para uma imagem provisória.
+* Adicionada a descoberta e o registro do estado da conexão iSCSI quando as sessões iSCSI deveriam estar conectadas, mas não estão (link:https://github.com/NetApp/trident/issues/961["Edição nº 961"] ).
+* Adicionado suporte para volumes SMB com o driver google-cloud-netapp-volumes.
+* Adicionada funcionalidade para permitir que volumes ONTAP ignorem a fila de recuperação ao serem excluídos.
+* Adicionada a possibilidade de substituir as imagens padrão usando SHAs em vez de tags.
+* Adicionada a flag image-pull-secrets ao instalador tridentctl.
+
+
+
+
+==== Correções
+
+* *Kubernetes*:
++
+** Corrigido o problema de endereços IP de nós ausentes nas políticas de exportação automática (link:https://github.com/NetApp/trident/issues/965["Edição nº 965"] ).
+** Corrigido o problema de políticas de exportação automáticas que mudavam prematuramente para a política por volume no ONTAP-NAS-Economy.
+** Credenciais de configuração de backend corrigidas para suportar todas as partições ARN da AWS disponíveis (link:https://github.com/NetApp/trident/issues/913["Edição nº 913"] ).
+** Adicionada opção para desativar a reconciliação automática do configurador no operador Trident (link:https://github.com/NetApp/trident/issues/924["Edição nº 924"] ).
+** Adicionado securityContext para o contêiner csi-resizer (link:https://github.com/NetApp/trident/issues/976["Edição nº 976"] ).
+
+
+
+
+
+
+=== Trident protege
+
+O NetApp Trident Protect fornece recursos avançados de gerenciamento de dados de aplicativos que aprimoram a funcionalidade e a disponibilidade de aplicativos Kubernetes com estado, apoiados pelos sistemas de armazenamento NetApp ONTAP e pelo provisionador de armazenamento NetApp Trident CSI.
+
+
+
+==== Melhorias
+
+* Adicionado suporte para backup e restauração de VMs de virtualização KubeVirt / OpenShift para armazenamento com volumeMode: File e volumeMode: Block (dispositivo bruto).  Este suporte é compatível com todos os drivers Trident e aprimora os recursos de proteção existentes ao replicar o armazenamento usando o NetApp SnapMirror com Trident Protect.
+* Adicionada a capacidade de controlar o comportamento de congelamento no nível do aplicativo para ambientes Kubevirt.
+* Adicionada a possibilidade de configurar conexões proxy do AutoSupport .
+* Adicionada a capacidade de definir um segredo para a criptografia do movimentador de dados (Kopia / Restic).
+* Adicionada a capacidade de executar manualmente um gancho de execução.
+* Adicionada a capacidade de configurar restrições de contexto de segurança (SCCs) durante a instalação do Trident Protect.
+* Adicionada a possibilidade de configurar o nodeSelector durante a instalação do Trident Protect.
+* Adicionado suporte para proxy de saída HTTP/HTTPS para objetos do AppVault.
+* Filtro de recursos estendido para permitir a exclusão de recursos com escopo de cluster.
+* Adicionada compatibilidade com o token de sessão da AWS nas credenciais do S3 AppVault.
+* Adicionado suporte para coleta de recursos após a execução de hooks de pré-snapshot.
+
+
+
+
+==== Correções
+
+* Melhoramos a gestão de volumes temporários para que não precisem entrar na fila de recuperação de volumes do ONTAP .
+* As anotações SCC foram restauradas aos seus valores originais.
+* Eficiência de restauração aprimorada com suporte para operações paralelas.
+* Suporte aprimorado para tempos limite de gancho de execução em aplicações maiores.
+
+
+
+
+== Mudanças em 24.10.1
+
+
+
+=== Melhorias
+
+* *Kubernetes*: Adicionado suporte para Kubernetes 1.32.
+* Adicionada a descoberta e o registro do estado da conexão iSCSI quando as sessões iSCSI deveriam estar conectadas, mas não estão (link:https://github.com/NetApp/trident/issues/961["Edição nº 961"] ).
+
+
+
+
+=== Correções
+
+* Corrigido o problema de endereços IP de nós ausentes nas políticas de exportação automática (link:https://github.com/NetApp/trident/issues/965["Edição nº 965"] ).
+* Corrigido o problema de políticas de exportação automáticas que mudavam prematuramente para a política por volume no ONTAP-NAS-Economy.
+* Dependências do Trident e do Trident-ASUP atualizadas para corrigir as vulnerabilidades CVE-2024-45337 e CVE-2024-45310.
+* Remoção de logouts para portais não-CHAP intermitentemente instáveis durante a autorrecuperação do iSCSI (link:https://github.com/NetApp/trident/issues/961["Edição nº 961"] ).
+
+
+
+
+== Mudanças em 24.10
+
+
+
+=== Melhorias
+
+* O driver Google Cloud NetApp Volumes agora está disponível para o público em geral para volumes NFS e oferece suporte ao provisionamento com reconhecimento de zona.
+* A identidade de carga de trabalho do GCP será usada como identidade de nuvem para Google Cloud NetApp Volumes com o GKE.
+* Adicionado `formatOptions` Parâmetro de configuração para os drivers ONTAP-SAN e ONTAP-SAN-Economy que permite aos usuários especificar opções de formato LUN.
+* Reduzimos o tamanho mínimo do volume do Azure NetApp Files para 50 GiB.  O novo tamanho mínimo do Azure deverá estar disponível para o público em geral em novembro.
+* Adicionado `denyNewVolumePools` Parâmetro de configuração para restringir os drivers ONTAP-NAS-Economy e ONTAP-SAN-Economy a pools Flexvol preexistentes.
+* Adicionada detecção para a inclusão, remoção ou renomeação de agregados do SVM em todos os drivers ONTAP .
+* Adicionou 18 MiB de sobrecarga aos LUNs LUKS para garantir que o tamanho de PVC relatado seja utilizável.
+* Melhorias no tratamento de erros de estágio e desestágio de nós ONTAP-SAN e ONTAP-SAN-Economy para permitir a remoção de dispositivos após uma falha de estágio.
+* Adicionamos um gerador de funções personalizadas que permite aos clientes criar uma função minimalista para o Trident no ONTAP.
+* Adicionadas informações de registro para solução de problemas. `lsscsi` (link:https://github.com/NetApp/trident/issues/792["Edição nº 792"] ).
+
+
+
+
+==== Kubernetes
+
+* Adicionadas novas funcionalidades do Trident para fluxos de trabalho nativos do Kubernetes:
++
+** Proteção de dados
+** Migração de dados
+** Recuperação de desastres
+** Mobilidade de aplicativos
++
+link:./trident-protect/learn-about-trident-protect.html["Saiba mais sobre o Trident Protect."].
+
+
+
+* Adicionada uma nova bandeira `--k8s-api-qps` Para os instaladores, é necessário definir o valor de QPS usado pelo Trident para se comunicar com o servidor da API do Kubernetes.
+* Adicionado `--node-prep` Uma opção para os instaladores que permite o gerenciamento automático das dependências do protocolo de armazenamento nos nós do cluster Kubernetes.  Compatibilidade testada e verificada com o protocolo de armazenamento iSCSI do Amazon Linux 2023.
+* Adicionado suporte para desanexação forçada de volumes ONTAP-NAS-Economy durante cenários de desligamento não controlado do nó.
+* Os novos volumes NFS ONTAP-NAS-Economy usarão políticas de exportação por qtree ao serem utilizados. `autoExportPolicy` opção de backend.  As Qtrees serão mapeadas para políticas de exportação restritivas de nós apenas no momento da publicação, para melhorar o controle de acesso e a segurança.  As qtrees existentes serão migradas para o novo modelo de política de exportação quando o Trident remover o volume de todos os nós, para que isso não afete as cargas de trabalho ativas.
+* Adicionado suporte para Kubernetes 1.31.
+
+
+
+
+==== Aprimoramentos experimentais
+
+* Adicionada prévia técnica para suporte a Fibre Channel no driver ONTAP-SAN.
+
+
+
+
+=== Correções
+
+* *Kubernetes*:
++
+** Webhook de admissão do Rancher corrigido, impedindo instalações do Trident Helm (link:https://github.com/NetApp/trident/issues/839["Edição nº 839"] ).
+** Chave de afinidade fixa nos valores do gráfico Helm (link:https://github.com/NetApp/trident/issues/898["Edição nº 898"] ).
+** Corrigido: tridentControllerPluginNodeSelector/tridentNodePluginNodeSelector não funcionará com o valor "true" (link:https://github.com/NetApp/trident/issues/899["Edição nº 899"] ).
+** Instantâneos efêmeros excluídos criados durante a clonagem (link:https://github.com/NetApp/trident/issues/901["Edição nº 901"] ).
+
+
+* Adicionado suporte para Windows Server 2019.
+* Corrigido o problema com o `go mod tidy` no repositório Trident (link:https://github.com/NetApp/trident/issues/767["Edição nº 767"] ).
+
+
+
+
+=== Depreciações
+
+* *Kubernetes:*
++
+** A versão mínima do Kubernetes suportada foi atualizada para 1.25.
+** Suporte para a Política de Segurança POD removido.
+
+
+
+
+
+
+=== Reformulação da marca do produto
+
+A partir da versão 24.10, o Astra Trident passou a se chamar Trident (Netapp Trident).  Essa mudança de marca não afeta nenhum recurso, plataforma suportada ou interoperabilidade do Trident.
+
+
+
+== Mudanças em 24.06
+
+
+
+=== Melhorias
+
+* **IMPORTANTE**: O `limitVolumeSize` O parâmetro agora limita os tamanhos de qtree/LUN nos drivers de economia do ONTAP .  Use o novo `limitVolumePoolSize` parâmetro para controlar os tamanhos do Flexvol nesses drivers.  (link:https://github.com/NetApp/trident/issues/341["Edição nº 341"] ).
+* Adicionada a capacidade de autorrecuperação do iSCSI para iniciar varreduras SCSI pelo ID exato do LUN caso grupos de interface obsoletos estejam em uso (link:https://github.com/NetApp/trident/issues/883["Edição nº 883"] ).
+* Adicionada a possibilidade de permitir operações de clonagem e redimensionamento de volumes mesmo quando o servidor estiver em modo de suspensão.
+* Adicionada a capacidade de propagar as configurações de log definidas pelo usuário para o controlador Trident aos pods dos nós Trident .
+* Adicionada a funcionalidade REST no Trident , em vez de ONTAPI (ZAPI), para versões do ONTAP 9.15.1 e posteriores.
+* Adicionada a possibilidade de definir nomes de volumes e metadados personalizados nos backends de armazenamento ONTAP para novos volumes persistentes.
+* Aprimorou o `azure-netapp-files` (ANF) driver para habilitar automaticamente o diretório de snapshots por padrão quando as opções de montagem NFS estiverem definidas para usar a versão 4.x do NFS.
+* Adicionado suporte ao Bottlerocket para volumes NFS.
+* Adicionada a pré-visualização técnica do Google Cloud NetApp Volumes.
+
+
+
+
+==== Kubernetes
+
+* Adicionado suporte para Kubernetes 1.30.
+* Adicionada a capacidade do Trident DaemonSet de limpar montagens zumbis e arquivos residuais de rastreamento na inicialização (link:https://github.com/NetApp/trident/issues/883["Edição nº 883"] ).
+* Adicionada anotação em PVC `trident.netapp.io/luksEncryption` para importar dinamicamente volumes LUKS (link:https://github.com/NetApp/trident/issues/849["Edição nº 849"] ).
+* Adicionada a capacidade de reconhecer a topologia ao driver ANF.
+* Adicionado suporte para nós do Windows Server 2022.
+
+
+
+
+=== Correções
+
+* Corrigido o problema de falhas na instalação do Trident devido a transações obsoletas.
+* Corrigido o problema no tridentctl para ignorar mensagens de aviso do Kubernetes (link:https://github.com/NetApp/trident/issues/892["Edição nº 892"] ).
+* Controlador Trident alterado `SecurityContextConstraint` prioridade para `0` (link:https://github.com/NetApp/trident/issues/887["Edição nº 887"] ).
+* Os drivers ONTAP agora aceitam tamanhos de volume inferiores a 20 MiB (link:https://github.com/NetApp/trident/issues/885["Problema[#885"] ).
+* Correção no Trident para evitar a redução de volumes FlexVol durante a operação de redimensionamento do driver ONTAP-SAN.
+* Corrigido o problema de falha na importação de volumes ANF com NFS v4.1.
+
+
+
+
+== Mudanças em 24.02
+
+
+
+=== Melhorias
+
+* Adicionado suporte para Identidade na Nuvem.
++
+** O AKS com ANF - Azure Workload Identity será usado como identidade na nuvem.
+** EKS com FSxN - A função AWS IAM será usada como identidade na nuvem.
+
+
+* Adicionada a possibilidade de instalar o Trident como um complemento no cluster EKS a partir do console do EKS.
+* Adicionada a capacidade de configurar e desativar a autorrecuperação do iSCSI (link:https://github.com/NetApp/trident/issues/864["Edição nº 864"] ).
+* Adicionada a funcionalidade Amazon FSx aos drivers ONTAP para permitir a integração com o AWS IAM e o SecretsManager, e para permitir que o Trident exclua volumes FSx com backups (link:https://github.com/NetApp/trident/issues/453["Edição nº 453"] ).
+
+
+
+
+==== Kubernetes
+
+* Adicionado suporte para Kubernetes 1.29.
+
+
+
+
+=== Correções
+
+* Mensagens de aviso do ACP corrigidas quando o ACP não está ativado (link:https://github.com/NetApp/trident/issues/866["Edição nº 866"] ).
+* Adicionamos um atraso de 10 segundos antes de realizar a divisão de clones durante a exclusão de snapshots para drivers ONTAP , quando um clone está associado ao snapshot.
+
+
+
+
+=== Depreciações
+
+* Remoção da estrutura de atestações in-toto dos manifestos de imagem multiplataforma.
+
+
+
+
+== Mudanças em 23.10
+
+
+
+=== Correções
+
+* Expansão de volume fixa se um novo tamanho solicitado for menor que o tamanho total do volume para os drivers de armazenamento ontap-nas e ontap-nas-flexgroup (link:https://github.com/NetApp/trident/issues/834["Edição nº 834"^] ).
+* Tamanho de volume fixo para exibir apenas o tamanho utilizável do volume durante a importação para drivers de armazenamento ontap-nas e ontap-nas-flexgroup (link:https://github.com/NetApp/trident/issues/722["Edição nº 722"^] ).
+* Correção na conversão de nomes FlexVol para ONTAP-NAS-Economy.
+* Corrigido problema de inicialização do Trident em um nó Windows quando o nó é reinicializado.
+
+
+
+
+=== Melhorias
+
+
+
+==== Kubernetes
+
+Adicionado suporte para Kubernetes 1.28.
+
+
+
+==== Trident
+
+* Adicionada compatibilidade com o uso de Identidades Gerenciadas do Azure (AMI) com o driver de armazenamento azure-netapp-files.
+* Adicionado suporte para NVMe sobre TCP para o driver ONTAP-SAN.
+* Adicionada a capacidade de pausar o provisionamento de um volume quando o backend for definido como suspenso pelo usuário (link:https://github.com/NetApp/trident/issues/558["Edição nº 558"^] ).
+
+
+
+
+== Mudanças em 23.07.1
+
+*Kubernetes:* Corrigida a exclusão de daemonset para suportar atualizações sem tempo de inatividade (link:https://github.com/NetApp/trident/issues/740["Edição nº 740"^] ).
+
+
+
+== Mudanças em 23.07
+
+
+
+=== Correções
+
+
+
+==== Kubernetes
+
+* Correção na atualização do Trident para ignorar pods antigos presos no estado de término (link:https://github.com/NetApp/trident/issues/740["Edição nº 740"^] ).
+* Adicionada tolerância à definição "transient-trident-version-pod" (link:https://github.com/NetApp/trident/issues/795["Edição nº 795"^] ).
+
+
+
+
+==== Trident
+
+* Corrigidas as solicitações ONTAPI (ZAPI) para garantir que os números de série do LUN sejam consultados ao obter os atributos do LUN, a fim de identificar e corrigir dispositivos iSCSI fantasmas durante as operações de preparação de nós.
+* Correção no tratamento de erros no código do driver de armazenamento (link:https://github.com/NetApp/trident/issues/816["Edição nº 816"^] ).
+* Correção no redimensionamento de cotas ao usar drivers ONTAP com use-rest=true.
+* Correção na criação de clones de LUN em ontap-san-economy.
+* Reverter o campo de informações de publicação de `rawDevicePath` para `devicePath` ; Adicionada lógica para preencher e recuperar (em alguns casos) `devicePath` campo.
+
+
+
+
+=== Melhorias
+
+
+
+==== Kubernetes
+
+* Adicionado suporte para importação de snapshots pré-provisionados.
+* Implantação minimizada e permissões do DaemonSet no Linux (link:https://github.com/NetApp/trident/issues/817["Edição nº 817"^] ).
+
+
+
+
+==== Trident
+
+* O campo de estado não será mais exibido para volumes e snapshots "online".
+* Atualiza o estado do backend se o backend ONTAP estiver offline (link:https://github.com/NetApp/trident/issues/801["Edição nº 801"^] ,link:https://github.com/NetApp/trident/issues/543["#543"^] ).
+* O número de série do LUN é sempre recuperado e publicado durante o fluxo de trabalho ControllerVolumePublish.
+* Adicionada lógica adicional para verificar o número de série e o tamanho do dispositivo iSCSI multipath.
+* Verificação adicional para volumes iSCSI para garantir que o dispositivo multipath correto esteja descompactado.
+
+
+
+
+==== Aprimoramento Experimental
+
+Adicionada a pré-visualização técnica do suporte a NVMe sobre TCP para o driver ONTAP-SAN.
+
+
+
+==== Documentação
+
+Foram feitas diversas melhorias de organização e formatação.
+
+
+
+=== Depreciações
+
+
+
+==== Kubernetes
+
+* Suporte para snapshots da versão 1beta1 removido.
+* Suporte removido para volumes e classes de armazenamento pré-CSI.
+* A versão mínima do Kubernetes suportada foi atualizada para 1.22.
+
+
+
+
+== Mudanças em 23.04
+
+
+IMPORTANT: O recurso de desanexação forçada de volumes ONTAP-SAN-* é compatível apenas com versões do Kubernetes que possuem o recurso de desligamento não gradual do nó ativado.  O recurso de desanexação forçada deve ser ativado durante a instalação usando o `--enable-force-detach` Bandeira do instalador Trident .
+
+
+
+=== Correções
+
+* Corrigido o problema com o Trident Operator, que agora usa IPv6 localhost para instalação quando especificado na especificação.
+* As permissões da função de cluster do operador Trident foram corrigidas para estarem sincronizadas com as permissões do pacote (link:https://github.com/NetApp/trident/issues/799["Edição nº 799"^] ).
+* Corrigido problema com a anexação de volume de bloco bruto em vários nós no modo RWX.
+* Correção do suporte à clonagem FlexGroup e à importação de volumes SMB.
+* Corrigido problema em que o controlador Trident não conseguia ser desligado imediatamente (link:https://github.com/NetApp/trident/issues/811["Edição nº 811"] ).
+* Adicionada correção para listar todos os nomes de igroup associados a um LUN específico provisionado com drivers ontap-san-*.
+* Adicionada uma correção para permitir que processos externos sejam executados até a conclusão.
+* Erro de compilação corrigido para a arquitetura s390 (link:https://github.com/NetApp/trident/issues/537["Edição nº 537"] ).
+* Corrigido o nível de registro incorreto durante as operações de montagem de volume (link:https://github.com/NetApp/trident/issues/781["Edição nº 781"] ).
+* Erro potencial de asserção de tipo corrigido (link:https://github.com/NetApp/trident/issues/802["Edição nº 802"] ).
+
+
+
+
+=== Melhorias
+
+* Kubernetes:
++
+** Adicionado suporte para Kubernetes 1.27.
+** Adicionado suporte para importação de volumes LUKS.
+** Adicionado suporte para o modo de acesso PVC ReadWriteOncePod.
+** Adicionado suporte para desanexação forçada de volumes ONTAP-SAN-* durante cenários de desligamento não controlado do nó.
+** Todos os volumes ONTAP-SAN-* agora usarão igroups por nó.  Para melhorar nossa postura de segurança, os LUNs serão mapeados para igroups somente enquanto estiverem ativamente publicados nesses nós.  Os volumes existentes serão migrados para o novo esquema de igroup de forma oportunista, quando a Trident determinar que é seguro fazê-lo sem afetar as cargas de trabalho ativas (link:https://github.com/NetApp/trident/issues/758["Edição nº 758"] ).
+** Segurança do Trident aprimorada através da limpeza de grupos de instâncias (igroups) gerenciados pelo Trident e não utilizados nos backends ONTAP-SAN-*.
+
+
+* Adicionamos suporte para volumes SMB com Amazon FSx aos drivers de armazenamento ontap-nas-economy e ontap-nas-flexgroup.
+* Adicionado suporte para compartilhamentos SMB com os drivers de armazenamento ontap-nas, ontap-nas-economy e ontap-nas-flexgroup.
+* Adicionado suporte para nós arm64 (link:https://github.com/NetApp/trident/issues/732["Edição nº 732"] ).
+* Procedimento de desligamento do Trident aprimorado, desativando primeiro os servidores de API (link:https://github.com/NetApp/trident/issues/811["Edição nº 811"] ).
+* Adicionada compatibilidade com compilação multiplataforma para hosts Windows e arm64 no Makefile; consulte BUILD.md.
+
+
+
+
+=== Depreciações
+
+**Kubernetes:** Grupos de instâncias (igroups) com escopo de backend não serão mais criados ao configurar os drivers ontap-san e ontap-san-economy (link:https://github.com/NetApp/trident/issues/758["Edição nº 758"] ).
+
+
+
+== Mudanças em 23.01.1
+
+
+
+=== Correções
+
+* Corrigido o problema com o Trident Operator, que agora usa IPv6 localhost para instalação quando especificado na especificação.
+* As permissões da função de cluster do operador Trident foram corrigidas para estarem sincronizadas com as permissões do pacote.link:https://github.com/NetApp/trident/issues/799["Edição nº 799"^] .
+* Adicionada uma correção para permitir que processos externos sejam executados até a conclusão.
+* Corrigido problema com a anexação de volume de bloco bruto em vários nós no modo RWX.
+* Correção do suporte à clonagem FlexGroup e à importação de volumes SMB.
+
+
+
+
+== Mudanças em 23.01
+
+
+IMPORTANT: O Kubernetes 1.27 agora é compatível com o Trident. Por favor, atualize o Trident antes de atualizar o Kubernetes.
+
+
+
+=== Correções
+
+* Kubernetes: Adicionadas opções para excluir a criação de Políticas de Segurança de Pod para corrigir instalações do Trident via Helm (link:https://github.com/NetApp/trident/issues/794["Edições nº 783, nº 794"^] ).
+
+
+
+
+=== Melhorias
+
+.Kubernetes
+* Adicionado suporte para Kubernetes 1.26.
+* Melhoria na utilização geral dos recursos do Trident RBAC (link:https://github.com/NetApp/trident/issues/757["Edição nº 757"^] ).
+* Adicionada automação para detectar e corrigir sessões iSCSI interrompidas ou obsoletas em nós de host.
+* Adicionado suporte para expansão de volumes criptografados com LUKS.
+* Kubernetes: Adicionado suporte para rotação de credenciais em volumes criptografados com LUKS.
+
+
+.Trident
+* Adicionamos suporte para volumes SMB com Amazon FSx for NetApp ONTAP ao driver de armazenamento ontap-nas.
+* Adicionada a compatibilidade com permissões NTFS ao usar volumes SMB.
+* Adicionada a funcionalidade de pools de armazenamento para volumes do GCP com nível de serviço CVS.
+* Adicionada a possibilidade de uso opcional do flexgroupAggregateList ao criar FlexGroups com o driver de armazenamento ontap-nas-flexgroup.
+* Desempenho aprimorado para o driver de armazenamento ontap-nas-economy ao gerenciar vários volumes FlexVol.
+* Ativadas as atualizações do dataLIF para todos os drivers de armazenamento ONTAP NAS.
+* Atualizamos a convenção de nomenclatura do Trident Deployment e do DaemonSet para refletir o sistema operacional do nó host.
+
+
+
+
+=== Depreciações
+
+* Kubernetes: Atualizamos a versão mínima do Kubernetes suportada para 1.21.
+* Não é mais necessário especificar DataLIFs ao configurar `ontap-san` ou `ontap-san-economy` motoristas.
+
+
+
+
+== Mudanças em 22.10
+
+*Você deve ler as seguintes informações críticas antes de atualizar para o Trident 22.10.*
+
+[WARNING]
+.<strong>Informações críticas sobre o Trident 22.10</strong>
+====
+* O Kubernetes 1.25 agora é compatível com o Trident. Você precisa atualizar o Trident para a versão 22.10 antes de atualizar para o Kubernetes 1.25.
+* O Trident agora impõe rigorosamente o uso da configuração de multipathing em ambientes SAN, com um valor recomendado de `find_multipaths: no` no arquivo multipath.conf.
++
+Utilização de configuração sem multipathing ou utilização de `find_multipaths: yes` ou `find_multipaths: smart` O valor no arquivo multipath.conf resultará em falhas de montagem.  A Trident recomendou o uso de `find_multipaths: no` desde a versão de 21/07.
+
+
+
+====
+
+
+=== Correções
+
+* Problema corrigido específico do backend ONTAP criado usando `credentials` O campo não ficou online durante a atualização para a versão 22.07.0 (link:https://github.com/NetApp/trident/issues/759["Edição nº 759"^] ).
+* **Docker:** Corrigido um problema que impedia a inicialização do plugin de volume do Docker em alguns ambientes (link:https://github.com/NetApp/trident/issues/548["Edição nº 548"^] elink:https://github.com/NetApp/trident/issues/760["Edição nº 760"^] ).
+* Corrigido problema de SLM específico para backends SAN ONTAP para garantir que apenas um subconjunto de dataLIFs pertencentes a nós de relatório sejam publicados.
+* Corrigido um problema de desempenho que causava varreduras desnecessárias de LUNs iSCSI ao conectar um volume.
+* Removemos as tentativas granulares no fluxo de trabalho iSCSI do Trident para que as falhas sejam detectadas rapidamente e os intervalos de repetição externa sejam reduzidos.
+* Corrigido um problema em que era retornado um erro ao limpar um dispositivo iSCSI quando o dispositivo multipath correspondente já havia sido limpo.
+
+
+
+
+=== Melhorias
+
+* Kubernetes:
++
+** Adicionado suporte para Kubernetes 1.25.  Você precisa atualizar o Trident para a versão 22.10 antes de atualizar para o Kubernetes 1.25.
+** Adicionamos uma ServiceAccount, ClusterRole e ClusterRoleBinding separadas para a implantação do Trident e o DaemonSet para permitir melhorias futuras nas permissões.
+** Adicionado suporte paralink:https://docs.netapp.com/us-en/trident/trident-use/volume-share.html["compartilhamento de volumes entre namespaces"] .
+
+
+* Todos os Trident `ontap-*` Os drivers de armazenamento agora funcionam com a API REST do ONTAP .
+* Adicionado novo operador yaml(`bundle_post_1_25.yaml` ) sem um `PodSecurityPolicy` Para dar suporte ao Kubernetes 1.25.
+* Adicionadolink:https://docs.netapp.com/us-en/trident/trident-reco/security-luks.html["suporte para volumes criptografados com LUKS"] para `ontap-san` e `ontap-san-economy` drivers de armazenamento.
+* Adicionado suporte para nós do Windows Server 2019.
+* Adicionadolink:https://docs.netapp.com/us-en/trident/trident-use/anf.html["Suporte para volumes SMB em nós Windows"] através do `azure-netapp-files` driver de armazenamento.
+* A detecção automática de transição do MetroCluster para drivers ONTAP agora está disponível para o público em geral.
+
+
+
+
+=== Depreciações
+
+* **Kubernetes:** Atualizamos a versão mínima do Kubernetes suportada para 1.20.
+* Driver Astra Data Store (ADS) removido.
+* Suporte removido para `yes` e `smart` opções para `find_multipaths` Ao configurar o multipathing de nós de trabalho para iSCSI.
+
+
+
+
+== Mudanças em 22.07
+
+
+
+=== Correções
+
+**Kubernetes**
+
+* Corrigido problema no tratamento de valores booleanos e numéricos para o seletor de nós ao configurar o Trident com o Helm ou o Trident Operator.  (link:https://github.com/NetApp/trident/issues/700["Problema nº 700 do GitHub"^] )
+* Corrigido problema no tratamento de erros em caminhos não-CHAP, de forma que o kubelet tente novamente em caso de falha. link:https://github.com/NetApp/trident/issues/736["Problema nº 736 no GitHub"^] )
+
+
+
+
+=== Melhorias
+
+* Transição de k8s.gcr.io para registry.k8s.io como registro padrão para imagens CSI.
+* Os volumes ONTAP-SAN agora usarão igroups por nó e mapearão LUNs para igroups somente enquanto estiverem ativamente publicados nesses nós, a fim de melhorar nossa postura de segurança.  Os volumes existentes serão migrados para o novo esquema de igroup de forma oportunista, quando a Trident determinar que é seguro fazê-lo sem afetar as cargas de trabalho ativas.
+* Incluímos uma ResourceQuota nas instalações do Trident para garantir que o DaemonSet do Trident seja agendado quando o consumo de PriorityClass for limitado por padrão.
+* Adicionada a funcionalidade de recursos de rede ao driver Azure NetApp Files .  (link:https://github.com/NetApp/trident/issues/717["Problema nº 717 do GitHub"^] )
+* Adicionada detecção automática de transição para MetroCluster em versão prévia aos drivers ONTAP .  (link:https://github.com/NetApp/trident/issues/228["Problema nº 228 no GitHub"^] )
+
+
+
+
+=== Depreciações
+
+* **Kubernetes:** Atualizamos a versão mínima do Kubernetes suportada para 1.19.
+* A configuração do backend não permite mais múltiplos tipos de autenticação em uma única configuração.
+
+
+
+
+=== Remoções
+
+* O driver AWS CVS (obsoleto desde a versão 22.04) foi removido.
+* Kubernetes
++
+** Removida a capacidade SYS_ADMIN desnecessária dos pods dos nós.
+** Reduz o nodeprep a informações simples do host e descoberta ativa de serviços para realizar uma confirmação, da melhor forma possível, de que os serviços NFS/iSCSI estão disponíveis nos nós de trabalho.
+
+
+
+
+
+
+=== Documentação
+
+Um novolink:https://docs.netapp.com/us-en/trident/trident-reference/pod-security.html["Padrões de segurança de pods"] A seção (PSS) foi adicionada, detalhando as permissões habilitadas pelo Trident na instalação.
+
+
+
+== Mudanças em 22.04
+
+A NetApp está continuamente melhorando e aprimorando seus produtos e serviços. Aqui estão algumas das funcionalidades mais recentes do Trident.  Para versões anteriores, consulte https://docs.netapp.com/us-en/trident/earlier-versions.html["Versões anteriores da documentação"] .
+
+
+IMPORTANT: Se você estiver atualizando de uma versão anterior do Trident e usar o Azure NetApp Files, o``location`` O parâmetro de configuração agora é um campo obrigatório e único.
+
+
+
+=== Correções
+
+* Análise aprimorada dos nomes dos iniciadores iSCSI.  (link:https://github.com/NetApp/trident/issues/681["Problema nº 681 no GitHub"^] )
+* Corrigido problema que impedia a utilização de parâmetros da classe de armazenamento CSI.  (link:https://github.com/NetApp/trident/issues/598["Problema nº 598 no GitHub"^] )
+* Correção de declaração de chave duplicada no CRD do Trident .  (link:https://github.com/NetApp/trident/issues/671["Problema nº 671 no GitHub"^] )
+* Registros de snapshots CSI imprecisos foram corrigidos.  (link:https://github.com/NetApp/trident/issues/629["Problema nº 629 no GitHub"^] ))
+* Problema resolvido ao cancelar a publicação de volumes em nós excluídos.  (link:https://github.com/NetApp/trident/issues/691["Problema nº 691 no GitHub"^] )
+* Adicionada a funcionalidade de tratamento de inconsistências do sistema de arquivos em dispositivos de bloco.  (link:https://github.com/NetApp/trident/issues/656["Problema nº 656 no GitHub"^] )
+* Corrigido problema ao extrair imagens de suporte automático ao configurar o `imageRegistry` sinalizador durante a instalação.  (link:https://github.com/NetApp/trident/issues/715["Problema nº 715 no GitHub"^] )
+* Corrigido um problema em que o driver Azure NetApp Files não conseguia clonar um volume com várias regras de exportação.
+
+
+
+
+=== Melhorias
+
+* As conexões de entrada para os endpoints seguros da Trident agora exigem, no mínimo, TLS 1.3.  (link:https://github.com/NetApp/trident/issues/698["Problema nº 698 no GitHub"^] )
+* A Trident agora adiciona cabeçalhos HSTS às respostas de seus endpoints seguros.
+* O Trident agora tenta habilitar automaticamente o recurso de permissões Unix do Azure NetApp Files .
+* *Kubernetes*: O daemonset Trident agora é executado na classe de prioridade system-node-critical.  (link:https://github.com/NetApp/trident/issues/694["Problema nº 694 no GitHub"^] )
+
+
+
+
+=== Remoções
+
+O driver da série E (desativado desde a versão 20.07) foi removido.
+
+
+
+== Mudanças em 22.01.1
+
+
+
+=== Correções
+
+* Problema resolvido ao cancelar a publicação de volumes em nós excluídos.  (link:https://github.com/NetApp/trident/issues/691["Problema nº 691 no GitHub"] )
+* Corrigido o erro que causava pânico ao acessar campos nulos para espaço agregado em respostas da API ONTAP .
+
+
+
+
+== Mudanças em 22.01.0
+
+
+
+=== Correções
+
+* *Kubernetes:* Aumentar o tempo limite de repetição do registro de nós para clusters grandes.
+* Corrigido um problema em que o driver azure-netapp-files podia ser confundido por vários recursos com o mesmo nome.
+* Agora, os DataLIFs IPv6 do SAN ONTAP funcionam se especificados entre colchetes.
+* Corrigido um problema em que a tentativa de importar um volume já importado retornava EOF, deixando o PVC em estado pendente.  (link:https://github.com/NetApp/trident/issues/489["Problema nº 489 no GitHub"] )
+* Corrigido problema em que o desempenho do Trident ficava mais lento quando mais de 32 snapshots eram criados em um volume SolidFire .
+* Substituí o SHA-1 pelo SHA-256 na criação do certificado SSL.
+* Corrigido o driver Azure NetApp Files para permitir nomes de recursos duplicados e limitar as operações a um único local.
+* Corrigido o driver Azure NetApp Files para permitir nomes de recursos duplicados e limitar as operações a um único local.
+
+
+
+
+=== Melhorias
+
+* Aprimoramentos do Kubernetes:
++
+** Adicionado suporte para Kubernetes 1.23.
+** Adicione opções de agendamento para pods do Trident quando instalados via Trident Operator ou Helm.  (link:https://github.com/NetApp/trident/issues/651["Problema nº 651 no GitHub"^] )
+
+
+* Permitir volumes entre regiões no driver do GCP.  (link:https://github.com/NetApp/trident/issues/633["Problema nº 633 no GitHub"^] )
+* Adicionada a opção 'unixPermissions' aos volumes do Azure NetApp Files .  (link:https://github.com/NetApp/trident/issues/666["Problema nº 666 no GitHub"^] )
+
+
+
+
+=== Depreciações
+
+A interface REST do Trident só pode escutar e atender em endereços 127.0.0.1 ou [::1].
+
+
+
+== Mudanças em 21.10.1
+
+
+WARNING: A versão v21.10.0 apresenta um problema que pode colocar o controlador Trident em um estado CrashLoopBackOff quando um nó é removido e, em seguida, adicionado novamente ao cluster Kubernetes.  Este problema foi corrigido na versão 21.10.1 (problema nº 669 no GitHub).
+
+
+
+=== Correções
+
+* Corrigida uma possível condição de corrida que ocorria ao importar um volume em um backend CVS do GCP, resultando em falha na importação.
+* Corrigido um problema que podia colocar o controlador Trident em estado CrashLoopBackOff quando um nó era removido e depois adicionado novamente ao cluster Kubernetes (problema nº 669 no GitHub).
+* Corrigido o problema em que as SVMs não eram mais detectadas se nenhum nome de SVM fosse especificado (problema nº 612 do GitHub).
+
+
+
+
+== Mudanças em 21.10.0
+
+
+
+=== Correções
+
+* Corrigido o problema que impedia a montagem de clones de volumes XFS no mesmo nó que o volume de origem (problema nº 514 do GitHub).
+* Corrigido o problema em que o Trident registrava um erro fatal ao ser desligado (problema nº 597 no GitHub).
+* Correções relacionadas ao Kubernetes:
++
+** Retorna o espaço usado de um volume como o tamanho mínimo de restauração (restoreSize) ao criar snapshots com `ontap-nas` e `ontap-nas-flexgroup` drivers (problema 645 do GitHub).
+** Problema corrigido onde `Failed to expand filesystem` Ocorreu um erro após o redimensionamento do volume (problema nº 560 no GitHub).
+** Corrigido problema em que um pod podia ficar preso em `Terminating` estado (problema 572 do GitHub).
+** Corrigido o caso em que um `ontap-san-economy` O FlexVol pode estar cheio de LUNs de snapshot (problema nº 533 do GitHub).
+** Corrigido problema com o instalador YAML personalizado que utilizava uma imagem diferente (problema nº 613 no GitHub).
+** Correção no cálculo do tamanho do snapshot (problema nº 611 do GitHub).
+** Corrigido o problema em que todos os instaladores do Trident identificavam o Kubernetes puro como OpenShift (problema nº 639 no GitHub).
+** Corrigido o operador Trident para interromper a reconciliação caso o servidor da API do Kubernetes esteja inacessível (problema nº 599 do GitHub).
+
+
+
+
+
+
+=== Melhorias
+
+* Adicionado suporte para `unixPermissions` opção para volumes de desempenho GCP-CVS.
+* Adicionado suporte para volumes CVS otimizados para escala no GCP, na faixa de 600 GiB a 1 TiB.
+* Melhorias relacionadas ao Kubernetes:
++
+** Adicionado suporte para Kubernetes 1.22.
+** Habilitei o operador Trident e o gráfico Helm para funcionar com o Kubernetes 1.22 (problema nº 628 no GitHub).
+** Adicionada imagem do operador ao `tridentctl` comando images (problema nº 570 do GitHub).
+
+
+
+
+
+
+=== Aprimoramentos experimentais
+
+* Adicionado suporte para replicação de volume no `ontap-san` motorista.
+* Adicionado suporte REST em *prévia técnica* para o `ontap-nas-flexgroup` , `ontap-san` , e `ontap-nas-economy` motoristas.
+
+
+
+
+== Problemas conhecidos
+
+Os problemas conhecidos identificam problemas que podem impedi-lo de usar o produto com sucesso.
+
+* Ao atualizar um cluster Kubernetes da versão 1.24 para a 1.25 ou posterior que tenha o Trident instalado, você deve atualizar o arquivo values.yaml para configurar `excludePodSecurityPolicy` para `true` ou adicione `--set excludePodSecurityPolicy=true` para o `helm upgrade` Execute o comando antes de atualizar o cluster.
+* Trident agora impõe um espaço em branco `fsType` (`fsType=""` ) para volumes que não possuem o `fsType` especificado em sua StorageClass.  Ao trabalhar com o Kubernetes 1.17 ou posterior, o Trident oferece suporte ao fornecimento de um arquivo em branco. `fsType` para volumes NFS.  Para volumes iSCSI, você precisa configurar o `fsType` na sua StorageClass ao impor um `fsGroup` Utilizando um contexto de segurança.
+* Ao usar um backend em várias instâncias do Trident , cada arquivo de configuração do backend deve ter um conteúdo diferente. `storagePrefix` valor para backends ONTAP ou use um diferente `TenantName` para backends SolidFire .  O Trident não consegue detectar volumes criados por outras instâncias do Trident .  A tentativa de criar um volume existente em backends ONTAP ou SolidFire é bem-sucedida, porque o Trident trata a criação de volume como uma operação idempotente.  Se `storagePrefix` ou `TenantName` Se não houver diferenças, pode haver conflitos de nomes para volumes criados no mesmo backend.
+* Ao instalar o Trident (usando `tridentctl` ou o operador Trident ) e usando `tridentctl` Para gerenciar o Trident, você deve garantir que `KUBECONFIG` A variável de ambiente está definida.  Isso é necessário para indicar o cluster Kubernetes que `tridentctl` deve trabalhar contra.  Ao trabalhar com vários ambientes Kubernetes, você deve garantir que o `KUBECONFIG` O arquivo possui fontes corretas.
+* Para realizar a recuperação de espaço online para PVs iSCSI, o sistema operacional subjacente no nó de trabalho pode exigir que opções de montagem sejam passadas para o volume.  Isso é válido para instâncias do RHEL/Red Hat Enterprise Linux CoreOS (RHCOS), que exigem o `discard` https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/discarding-unused-blocks_managing-file-systems["opção de montagem"^] ; certifique-se de que a opção de descarte mountOption esteja incluída em seu[`StorageClass` ^] para dar suporte ao descarte de blocos online.
+* Se você tiver mais de uma instância do Trident por cluster Kubernetes, o Trident não poderá se comunicar com outras instâncias nem descobrir outros volumes que elas criaram, o que leva a um comportamento inesperado e incorreto caso mais de uma instância esteja em execução no cluster.  Deve haver apenas uma instância do Trident por cluster Kubernetes.
+* Se baseado em Trident `StorageClass` Os objetos são excluídos do Kubernetes enquanto o Trident está offline, mas o Trident não remove as classes de armazenamento correspondentes do seu banco de dados quando volta a ficar online.  Você deve excluir essas classes de armazenamento usando `tridentctl` ou a API REST.
+* Se um usuário excluir um PV provisionado pelo Trident antes de excluir o PVC correspondente, o Trident não excluirá automaticamente o volume de suporte.  Você deve remover o volume através de `tridentctl` ou a API REST.
+* O ONTAP não pode provisionar mais de um FlexGroup simultaneamente, a menos que o conjunto de agregados seja exclusivo para cada solicitação de provisionamento.
+* Ao usar o Trident sobre IPv6, você deve especificar `managementLIF` e `dataLIF` na definição do backend, entre colchetes.  Por exemplo,``[fd20:8b1e:b258:2000:f816:3eff:feec:0]`` .
++
+
+NOTE: Você não pode especificar `dataLIF` em um backend ONTAP SAN.  O Trident descobre todas as LIFs iSCSI disponíveis e as utiliza para estabelecer a sessão multipath.
+
+* Se estiver usando o `solidfire-san` Ao configurar o driver com o OpenShift 4.5, certifique-se de que os nós de trabalho subjacentes utilizem MD5 como algoritmo de autenticação CHAP.  Os algoritmos CHAP seguros e compatíveis com FIPS, SHA1, SHA-256 e SHA3-256, estão disponíveis no Element 12.7.
+
+
+
+
+== Encontre mais informações
+
+* https://github.com/NetApp/trident["Trident GitHub"^]
+* https://netapp.io/persistent-storage-provisioner-for-kubernetes/["Blogs da Trident"^]
+

@@ -1,0 +1,266 @@
+---
+sidebar: sidebar 
+permalink: trident-get-started/kubernetes-deploy-operator.html 
+keywords: deploy, Trident, methods, operator, tridentctl, registry, registries 
+summary: Você pode implantar manualmente o operador Trident para instalar o Trident.  Este processo aplica-se a instalações onde as imagens de contêiner exigidas pelo Trident não estão armazenadas em um registro privado. 
+---
+= Implantação manual do operador Trident (modo padrão)
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Você pode implantar manualmente o operador Trident para instalar o Trident.  Este processo aplica-se a instalações onde as imagens de contêiner exigidas pelo Trident não estão armazenadas em um registro privado.  Se você tiver um registro de imagens privado, use olink:kubernetes-deploy-operator-mirror.html["processo para implantação offline"] .
+
+
+
+== Informações críticas sobre o Trident 25.06
+
+*Você deve ler as seguintes informações críticas sobre Trident.*
+
+.<strong>Informações críticas sobre o Trident</strong>
+[%collapsible%open]
+====
+[]
+=====
+* O Kubernetes 1.34 agora é compatível com o Trident. Atualize o Trident antes de atualizar o Kubernetes.
+* A Trident impõe rigorosamente o uso da configuração de multipathing em ambientes SAN, com um valor recomendado de `find_multipaths: no` no arquivo multipath.conf.
++
+Utilização de configuração sem multipathing ou utilização de `find_multipaths: yes` ou `find_multipaths: smart` O valor no arquivo multipath.conf resultará em falhas de montagem.  A Trident recomendou o uso de `find_multipaths: no` desde a versão de 21/07.
+
+
+
+=====
+====
+
+
+== Implante manualmente o operador Trident e instale o Trident.
+
+Análiselink:../trident-get-started/kubernetes-deploy.html["visão geral da instalação"] Para garantir que você atendeu aos pré-requisitos de instalação e selecionou a opção de instalação correta para o seu ambiente.
+
+.Antes de começar
+Antes de iniciar a instalação, faça login no host Linux e verifique se ele está gerenciando um sistema operacional em funcionamento.link:requirements.html["cluster Kubernetes suportado"^] e que você possui os privilégios necessários.
+
+
+NOTE: Com o OpenShift, use `oc` em vez de `kubectl` Em todos os exemplos a seguir, faça login como *system:admin* primeiro executando o seguinte comando: `oc login -u system:admin` ou `oc login -u kube-admin` .
+
+[%collapsible%open]
+====
+. Verifique sua versão do Kubernetes:
++
+[listing]
+----
+kubectl version
+----
+. Verificar privilégios de administrador do cluster:
++
+[listing]
+----
+kubectl auth can-i '*' '*' --all-namespaces
+----
+. Verifique se você consegue iniciar um pod que utiliza uma imagem do Docker Hub e acessar seu sistema de armazenamento através da rede de pods:
++
+[listing]
+----
+kubectl run -i --tty ping --image=busybox --restart=Never --rm -- \
+  ping <management IP>
+----
+
+
+====
+
+
+=== Passo 1: Baixe o pacote de instalação do Trident
+
+O pacote de instalação do Trident contém tudo o que você precisa para implantar o operador Trident e instalar o Trident.  Baixe e extraia a versão mais recente do instalador do Trident emlink:https://github.com/NetApp/trident/releases/latest["a seção _Assets_ no GitHub"^] .
+
+[listing]
+----
+wget https://github.com/NetApp/trident/releases/download/v25.06.0/trident-installer-25.06.0.tar.gz
+tar -xf trident-installer-25.06.0.tar.gz
+cd trident-installer
+----
+
+
+=== Passo 2: Crie o `TridentOrchestrator` CRD
+
+Crie o `TridentOrchestrator` Definição de Recurso Personalizado (CRD).  Você criará um `TridentOrchestrator` Recurso personalizado mais tarde.  Use a versão YAML do CRD apropriada em `deploy/crds` para criar o `TridentOrchestrator` CRD.
+
+[listing]
+----
+kubectl create -f deploy/crds/trident.netapp.io_tridentorchestrators_crd_post1.16.yaml
+----
+
+
+=== Etapa 3: Implante o operador Trident
+
+O instalador do Trident fornece um arquivo de pacote que pode ser usado para instalar o operador e criar objetos associados.  O arquivo de pacote é uma maneira fácil de implantar o operador e instalar o Trident usando uma configuração padrão.
+
+* Para clusters executando Kubernetes 1.24, use `bundle_pre_1_25.yaml` .
+* Para clusters executando Kubernetes 1.25 ou posterior, use `bundle_post_1_25.yaml` .
+
+
+.Antes de começar
+* Por padrão, o instalador do Trident implanta o operador no `trident` espaço de nomes.  Se o `trident` O namespace não existe. Crie-o usando:
++
+[listing]
+----
+kubectl apply -f deploy/namespace.yaml
+----
+* Para implantar o operador em um namespace diferente do `trident` namespace, atualização `serviceaccount.yaml` , `clusterrolebinding.yaml` e `operator.yaml` e gere seu arquivo de pacote usando o `kustomization.yaml` .
++
+.. Crie o `kustomization.yaml` usando o seguinte comando onde _<bundle.yaml>_ é `bundle_pre_1_25.yaml` ou `bundle_post_1_25.yaml` com base na sua versão do Kubernetes.
++
+[listing]
+----
+cp deploy/kustomization_<bundle.yaml> deploy/kustomization.yaml
+----
+.. Compile o pacote usando o seguinte comando, onde _<bundle.yaml>_ é `bundle_pre_1_25.yaml` ou `bundle_post_1_25.yaml` com base na sua versão do Kubernetes.
++
+[listing]
+----
+kubectl kustomize deploy/ > deploy/<bundle.yaml>
+----
+
+
+
+
+.Passos
+. Crie os recursos e implemente o operador:
++
+[listing]
+----
+kubectl create -f deploy/<bundle.yaml>
+----
+. Verifique se o operador, a implantação e os conjuntos de réplicas foram criados.
++
+[listing]
+----
+kubectl get all -n <operator-namespace>
+----
+
+
+
+IMPORTANT: Deve haver apenas *uma instância* do operador em um cluster Kubernetes.  Não crie várias instalações do operador Trident .
+
+
+
+=== Passo 4: Crie o `TridentOrchestrator` e instalar o Trident
+
+Agora você pode criar o `TridentOrchestrator` e instale o Trident.  Opcionalmente, você podelink:kubernetes-customize-deploy.html["Personalize a sua instalação do Trident."] usando os atributos no `TridentOrchestrator` especificação.
+
+[listing]
+----
+kubectl create -f deploy/crds/tridentorchestrator_cr.yaml
+tridentorchestrator.trident.netapp.io/trident created
+
+kubectl describe torc trident
+
+Name:        trident
+Namespace:
+Labels:      <none>
+Annotations: <none>
+API Version: trident.netapp.io/v1
+Kind:        TridentOrchestrator
+...
+Spec:
+  Debug:     true
+  Namespace: trident
+  nodePrep:
+  - iscsi
+Status:
+  Current Installation Params:
+    IPv6:                      false
+    Autosupport Hostname:
+    Autosupport Image:         netapp/trident-autosupport:25.06
+    Autosupport Proxy:
+    Autosupport Serial Number:
+    Debug:                     true
+    Image Pull Secrets:
+    Image Registry:
+    k8sTimeout:           30
+    Kubelet Dir:          /var/lib/kubelet
+    Log Format:           text
+    Silence Autosupport:  false
+    Trident Image:        netapp/trident:25.06.0
+  Message:                  Trident installed  Namespace:                trident
+  Status:                   Installed
+  Version:                  v25.06.0
+Events:
+    Type Reason Age From Message ---- ------ ---- ---- -------Normal
+    Installing 74s trident-operator.netapp.io Installing Trident Normal
+    Installed 67s trident-operator.netapp.io Trident installed
+----
+
+
+== Verifique a instalação
+
+Existem várias maneiras de verificar sua instalação.
+
+
+
+=== Usando `TridentOrchestrator` status
+
+O estado de `TridentOrchestrator` Indica se a instalação foi bem-sucedida e exibe a versão do Trident instalada.  Durante a instalação, o estado de `TridentOrchestrator` mudanças de `Installing` para `Installed` .  Se você observar o `Failed` status e o operador não consegue se recuperar sozinho,link:../troubleshooting.html["Verifique os registros."] .
+
+[cols="2"]
+|===
+| Status | Descrição 
+
+
+| Instalação | O operador está instalando o Trident usando este sistema. `TridentOrchestrator` CR. 
+
+
+| Instalado | O Trident foi instalado com sucesso. 
+
+
+| Desinstalando | O operador está desinstalando o Trident porque
+`spec.uninstall=true` . 
+
+
+| Desinstalado | O Trident foi desinstalado. 
+
+
+| Fracassado | O operador não conseguiu instalar, corrigir, atualizar ou desinstalar o Trident; o operador tentará automaticamente recuperar-se deste estado.  Se esse estado persistir, será necessário solucionar o problema. 
+
+
+| Atualizando | O operador está atualizando uma instalação existente. 
+
+
+| Erro | O `TridentOrchestrator` Não é utilizado.  Já existe outro. 
+|===
+
+
+=== Usando o status de criação do pod
+
+Você pode confirmar se a instalação do Trident foi concluída verificando o status dos pods criados:
+
+[listing]
+----
+kubectl get pods -n trident
+
+NAME                                       READY   STATUS    RESTARTS   AGE
+trident-controller-7d466bf5c7-v4cpw        6/6     Running   0           1m
+trident-node-linux-mr6zc                   2/2     Running   0           1m
+trident-node-linux-xrp7w                   2/2     Running   0           1m
+trident-node-linux-zh2jt                   2/2     Running   0           1m
+trident-operator-766f7b8658-ldzsv          1/1     Running   0           3m
+----
+
+
+=== Usando `tridentctl`
+
+Você pode usar `tridentctl` Para verificar a versão do Trident instalada.
+
+[listing]
+----
+./tridentctl -n trident version
+
++----------------+----------------+
+| SERVER VERSION | CLIENT VERSION |
++----------------+----------------+
+| 25.06.0        | 25.06.0        |
++----------------+----------------+
+----
