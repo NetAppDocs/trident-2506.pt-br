@@ -2445,23 +2445,19 @@
   <block id="948be8a05d305f0b3dece0e8dcaf4546" category="list-text">Depois de preencher o<block ref="3e2c6ff026eba99761434b4f79aaa782" prefix=" " category="inline-code"></block> Arquivo com os valores corretos, aplique o CR:</block>
   <block id="677aa747b5e08444532c7cc040384124" category="open-title">Crie o aplicativo de origem usando a CLI (linha de comando)</block>
   <block id="feaddb5b204f8f8f1226cc6f02275f5c" category="list-text">Crie o aplicativo de origem. Por exemplo:</block>
-  <block id="f815c45e5a618fe75ef3a716b30b711d" category="list-text">Opcionalmente, no cluster de origem, tire um snapshot do aplicativo de origem.  Este instantâneo é usado como base para a aplicação no cluster de destino.  Se você pular esta etapa, precisará aguardar a próxima captura de instantâneo agendada para obter um instantâneo recente.</block>
   <block id="9399bd959f53d5a7d8671b597df92df2" category="paragraph">Além da programação fornecida abaixo, recomenda-se criar uma programação de snapshots diários separada, com um período de retenção de 7 dias, para manter um snapshot comum entre os clusters ONTAP interligados.  Isso garante que os instantâneos fiquem disponíveis por até 7 dias, mas o período de retenção pode ser personalizado de acordo com as necessidades do usuário.</block>
   <block id="bd8250ba3a5ac73f1ca0ba8c92937c5a" category="paragraph">Caso ocorra uma falha, o sistema pode usar esses snapshots por até 7 dias para operações de reversão.  Essa abordagem torna o processo inverso mais rápido e eficiente, pois apenas as alterações feitas desde o último instantâneo serão transferidas, e não todos os dados.</block>
   <block id="af22b57fbc1d302d6a0b83cb06ce9e6a" category="paragraph">Se um cronograma existente para o aplicativo já atender aos requisitos de retenção desejados, não serão necessários cronogramas adicionais.</block>
-  <block id="84caf200e79d5962bc7f3516e9ad328c" category="open-title">Tire uma foto usando uma CR (Câmera de Reprodução).</block>
   <block id="929d5ad53cad5d51ead7578004e2d5e5" category="list-text">Crie um agendamento de replicação para o aplicativo de origem:</block>
   <block id="57cc31c4785dfe52bb22cc8d375a3b67" category="list-text">Crie o arquivo de recurso personalizado (CR) e dê um nome a ele (por exemplo,<block ref="8898becea7c9a79dd32acb9c34818b46" prefix=" " category="inline-code"></block> ).</block>
   <block id="87918fdbe5607aeceec3ec53bc40a2f8" category="list-text">*metadata.name*: (_Obrigatório_) O nome do recurso personalizado de agendamento.</block>
   <block id="3e23380d121194d4ed43d5587e33eeba" category="list-text">*spec.AppVaultRef*: (_Obrigatório_) Este valor deve corresponder ao campo metadata.name do AppVault para o aplicativo de origem.</block>
-  <block id="a7ac547d97c63ad78926b420081cf36d" category="list-text">*spec.ApplicationRef*: (_Obrigatório_) Este valor deve corresponder ao campo metadata.name do CR da aplicação de origem.</block>
   <block id="565c53b27f6972afc514c3431a7fb733" category="list-text">*spec.backupRetention*: (_Obrigatório_) Este campo é obrigatório e o valor deve ser definido como 0.</block>
   <block id="e00228f2eaa851d908b74fd6e1cbb1ab" category="list-text">*spec.enabled*: Deve ser definido como verdadeiro.</block>
   <block id="b8e08f9f53492c0cf7c4c918c8c27185" category="list-text">*spec.granularity*: Deve ser definido como<block ref="90589c47f06eb971d548591f23c285af" prefix=" " category="inline-code"></block> .</block>
   <block id="8c33ed4b89c2cd001ffad0203fe3c3b6" category="list-text">*spec.recurrenceRule*: Define uma data de início em UTC e um intervalo de recorrência.</block>
   <block id="35ef995e5b9fe2ba99491ff849d63302" category="list-text">*spec.snapshotRetention*: Deve ser definido como 2.</block>
   <block id="7c6d1c687b69c90909ec8375ac84883e" category="list-text">Depois de preencher o<block ref="8898becea7c9a79dd32acb9c34818b46" prefix=" " category="inline-code"></block> Arquivo com os valores corretos, aplique o CR:</block>
-  <block id="3feb4a62c8b59cd52ae22845d363c901" category="open-title">Tire uma captura de tela usando a CLI</block>
   <block id="85d88f09b637997959adc6d50a42d56f" category="list-text">No cluster de destino, crie um AppVault CR de aplicativo de origem idêntico ao AppVault CR que você aplicou no cluster de origem e nomeie-o (por exemplo,<block ref="3ad9e8b652d0a9a977e2534bf143ea29" prefix=" " category="inline-code"></block> ).</block>
   <block id="04a53b4d2f7e20d9df207bfb6beb6ee7" category="list-text">Aplicar o CR:</block>
   <block id="8af8219e9797756f7e348dd40e365632" category="list-text">Crie uma solicitação de configuração (CR) do AppVault de destino para o aplicativo de destino no cluster de destino.  Dependendo do seu provedor de armazenamento, modifique um exemplo em<block ref="789b31b0a5cabea5de04107e65439f53" category="inline-link-macro-rx"></block> para se adequar ao seu ambiente:</block>
@@ -2476,10 +2472,8 @@
   <block id="ad47c31cec730ddef75893f6207a8350" category="list-text">*spec.namespaceMapping*: (_Obrigatório_) Os namespaces de destino e de origem devem corresponder ao namespace do aplicativo definido no respectivo CR do aplicativo.</block>
   <block id="0d2f17f43053f85c97752c575bb2af3e" category="list-text">*spec.sourceAppVaultRef*: (_Obrigatório_) Este valor deve corresponder ao nome do AppVault para o aplicativo de origem.</block>
   <block id="5c0044cad9c27e4f4742c4a031edd6eb" category="list-text">*spec.sourceApplicationName*: (_Obrigatório_) Este valor deve corresponder ao nome do aplicativo de origem que você definiu no CR do aplicativo de origem.</block>
-  <block id="5e77ee724e7a9c6f34c1fd6a65b3f3b5" category="list-text">*spec.storageClassName*: (_Obrigatório_) Escolha o nome de uma classe de armazenamento válida no cluster.  A classe de armazenamento deve ser vinculada a uma VM de armazenamento ONTAP que esteja emparelhada com o ambiente de origem.</block>
   <block id="e1e70c108ffb369c9c05ac65820562c3" category="list-text">Depois de preencher o<block ref="e4fba3915616865173fe7feee130a30f" prefix=" " category="inline-code"></block> Arquivo com os valores corretos, aplique o CR:</block>
   <block id="d4c94febe4f13411fa761de57ad6cce6" category="open-title">Crie um relacionamento AppMirror usando a CLI</block>
-  <block id="1d29e9d9da5d097b90cc18a976fa591c" category="list-text">Crie e aplique o objeto AppMirrorRelationship, substituindo os valores entre colchetes pelas informações do seu ambiente. Por exemplo:</block>
   <block id="3d9dc864aeb5b914422a6a665c53ceeb" category="list-text">(Opcional) No cluster de destino, verifique o estado e o status da relação de replicação:</block>
   <block id="70cc2bec279e168711b67e789468c45c" category="section-title">Failover para o cluster de destino</block>
   <block id="196c4df78e5add7c9590d6a1c18367ec" category="paragraph">Usando o Trident Protect, você pode realizar o failover de aplicativos replicados para um cluster de destino.  Este procedimento interrompe a relação de replicação e coloca o aplicativo online no cluster de destino.  O Trident Protect não interrompe o aplicativo no cluster de origem se ele estiver operacional.</block>
@@ -5838,4 +5832,14 @@
   <block id="e8ce47501426b8525633fc30daf17d7a" category="sidebar">Personalize os nomes dos volumes</block>
   <block id="f18a50f02f48551895d57b81dd288142" category="sidebar">Compartilhar volumes NFS entre namespaces</block>
   <block id="62486fa65fc31c383ace8989549632ad" category="sidebar">Usar instantâneos</block>
+  <block id="30e52f4e46178e20ec0172d136f6e964" category="list-text">Opcionalmente, no cluster de origem, tire um snapshot do aplicativo de origem. Este instantâneo é usado como base para a aplicação no cluster de destino. Se você pular esta etapa, precisará aguardar a próxima captura de instantâneo agendada para obter um instantâneo recente. Para criar um instantâneo sob demanda, consulte <block ref="359fb751a7b652662d6f4f859ab7278e" category="inline-link-macro-rx"></block>.</block>
+  <block id="5c24c4abf654732ea864deb8dfd27900" category="list-text">No cluster de origem, crie a solicitação de configuração (CR) para o agendamento de replicação:</block>
+  <block id="7f3cf5a508f65aafe24cfcbde532a846" category="open-title">Crie o cronograma de replicação usando uma CR (Código de Referência).</block>
+  <block id="7228f7e08042915e251a683bfff18231" category="list-text">*spec.appVaultRef*: (_Obrigatório_) Este valor deve corresponder ao campo metadata.name do AppVault para o aplicativo de origem.</block>
+  <block id="2845cbe42176f1140d5d897aaf3abea8" category="list-text">*spec.applicationRef*: (_Obrigatório_) Este valor deve corresponder ao campo metadata.name do CR da aplicação de origem.</block>
+  <block id="4cd94b75213793150ad247d75cd897e9" category="open-title">Crie o agendamento de replicação usando a CLI</block>
+  <block id="3de5f07029546bc00c37d9c9edf9cc20" category="list-text">Crie o cronograma de replicação, substituindo os valores entre colchetes pelas informações do seu ambiente:</block>
+  <block id="7749c9ae56691a1f3a933f4d23d038e3" category="list-text">*spec.sourceApplicationUID*: (Obrigatório) Este valor deve corresponder ao UID do aplicativo de origem que você definiu no CR do aplicativo de origem.</block>
+  <block id="3d684c1e0271c67148a368e61c2e954e" category="list-text">*spec.storageClassName*: (Opcional) Escolha o nome de uma classe de armazenamento válida no cluster. A classe de armazenamento deve ser vinculada a uma VM de armazenamento ONTAP que esteja emparelhada com o ambiente de origem. Caso a classe de armazenamento não seja especificada, a classe de armazenamento padrão do cluster será utilizada por padrão.</block>
+  <block id="c97418e1743694adcebfb4447351b629" category="list-text">Crie e aplique o objeto AppMirrorRelationship, substituindo os valores entre colchetes pelas informações do seu ambiente:</block>
 </blocks>
