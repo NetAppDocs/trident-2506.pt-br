@@ -347,13 +347,13 @@ kubectl get backup -n <namespace_name> <my_backup_cr_name> -o jsonpath='{.status
 
 == Habilitar backup e restauração para operações do Azure NetApp Files (ANF)
 
-Se você instalou o Trident Protect, pode habilitar a funcionalidade de backup e restauração com uso eficiente de espaço para back-ends de armazenamento que utilizam a classe de armazenamento azure-netapp-files e foram criados antes do Trident 24.06.  Essa funcionalidade opera com volumes NFSv4 e não consome espaço adicional do pool de capacidade.
+Se você instalou o Trident Protect, pode habilitar a funcionalidade de backup e restauração com uso eficiente de espaço para back-ends de armazenamento que utilizam a classe de armazenamento azure-netapp-files e foram criados antes do Trident 24.06. Essa funcionalidade opera com volumes NFSv4 e não consome espaço adicional do pool de capacidade.
 
 .Antes de começar
 Garanta o seguinte:
 
 * Você instalou o Trident Protect.
-* Você definiu um aplicativo no Trident Protect.  Este aplicativo terá funcionalidade de proteção limitada até que você conclua este procedimento.
+* Você definiu um aplicativo no Trident Protect. Este aplicativo terá funcionalidade de proteção limitada até que você conclua este procedimento.
 * Você tem `azure-netapp-files` Selecionada como a classe de armazenamento padrão para seu backend de armazenamento.
 
 
@@ -383,13 +383,13 @@ Resposta:
 snapshotDirectory: "true"
 ----
 +
-Quando o diretório de snapshots não está habilitado, o Trident Protect escolhe a funcionalidade de backup regular, que consome temporariamente espaço no pool de capacidade durante o processo de backup.  Nesse caso, certifique-se de que haja espaço suficiente disponível no pool de capacidade para criar um volume temporário do tamanho do volume que está sendo copiado.
+Quando o diretório de instantâneos não está habilitado, o sistema escolhe a funcionalidade de backup regular, que consome temporariamente espaço no pool de capacidade durante o processo de backup. Nesse caso, certifique-se de que haja espaço suficiente disponível no pool de capacidade para criar um volume temporário do tamanho do volume que está sendo copiado.
 
 
 
 
 
 .Resultado
-O aplicativo está pronto para backup e restauração usando o Trident Protect.  Cada PVC também pode ser usado por outros aplicativos para backups e restaurações.
+O aplicativo está pronto para backup e restauração usando o Trident Protect. Cada PVC também pode ser usado por outros aplicativos para backups e restaurações.
 
 ====

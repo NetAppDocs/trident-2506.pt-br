@@ -5,7 +5,7 @@
 . (Opcional) Se precisar selecionar apenas determinados recursos do aplicativo para restaurar, adicione filtros que incluam ou excluam recursos marcados com rótulos específicos:
 +
 
-NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona.  Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
+NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona. Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (Obrigatório para filtragem) Use `Include` ou `Exclude` Para incluir ou excluir um recurso definido em resourceMatchers.  Adicione os seguintes parâmetros resourceMatchers para definir os recursos a serem incluídos ou excluídos:

@@ -2,9 +2,9 @@
 permalink: trident-protect/monitor-trident-protect-resources.html 
 sidebar: sidebar 
 keywords: manage, authentication, rbac 
-summary: Você pode monitorar o estado dos recursos do Trident Protect usando o kube-state-metrics e o Prometheus.  Isso fornece informações sobre o estado de implantação, nós e pods. 
+summary: Você pode monitorar o estado dos recursos do Trident Protect usando o kube-state-metrics e o Prometheus. Isso fornece informações sobre o estado de implantação, nós e pods. 
 ---
-= Monitor Trident protege recursos
+= Monitorar recursos do Trident Protect
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
@@ -13,9 +13,9 @@ summary: Você pode monitorar o estado dos recursos do Trident Protect usando o 
 [role="lead"]
 Você pode usar as ferramentas de código aberto kube-state-metrics, Prometheus e Alertmanager para monitorar a integridade dos recursos protegidos pelo Trident Protect.
 
-O serviço kube-state-metrics gera métricas a partir da comunicação da API do Kubernetes.  Ao utilizá-lo com o Trident Protect, você obtém informações úteis sobre o estado dos recursos em seu ambiente.
+O serviço kube-state-metrics gera métricas a partir da comunicação da API do Kubernetes. Ao utilizá-lo com o Trident Protect, você obtém informações úteis sobre o estado dos recursos em seu ambiente.
 
-O Prometheus é um conjunto de ferramentas que pode ingerir os dados gerados pelo kube-state-metrics e apresentá-los como informações facilmente legíveis sobre esses objetos.  Em conjunto, o kube-state-metrics e o Prometheus oferecem uma maneira de monitorar a integridade e o status dos recursos que você está gerenciando com o Trident Protect.
+O Prometheus é um conjunto de ferramentas que pode ingerir os dados gerados pelo kube-state-metrics e apresentá-los como informações facilmente legíveis sobre esses objetos. Em conjunto, o kube-state-metrics e o Prometheus oferecem uma maneira de monitorar a integridade e o status dos recursos que você está gerenciando com o Trident Protect.
 
 O Alertmanager é um serviço que recebe os alertas enviados por ferramentas como o Prometheus e os encaminha para destinos que você configura.
 

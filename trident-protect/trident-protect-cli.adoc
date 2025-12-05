@@ -14,7 +14,7 @@ summary: Você pode usar o comando protectctl para criar e interagir com recurso
 
 
 [role="lead"]
-Você pode usar o plugin de linha de comando Trident Protect, que é uma extensão do Trident. `tridentctl` utilitário para criar e interagir com recursos personalizados (CRs) do Trident Protect.
+Você pode usar o plugin de linha de comando Trident Protect, que é uma extensão do Trident. `tridentctl` Utilitário para criar e interagir com recursos personalizados (CRs) do Trident Protect.
 
 
 

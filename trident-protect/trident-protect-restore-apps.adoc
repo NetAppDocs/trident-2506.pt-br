@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: trident-protect/trident-protect-restore-apps.html 
 keywords: trident, protect, restore, data, backup 
-summary: Você pode usar o Trident Protect para restaurar seu aplicativo a partir de um snapshot ou backup.  A restauração a partir de um snapshot existente será mais rápida ao restaurar o aplicativo no mesmo cluster. 
+summary: Você pode usar o Trident Protect para restaurar seu aplicativo a partir de um snapshot ou backup. A restauração a partir de um snapshot existente será mais rápida ao restaurar o aplicativo no mesmo cluster. 
 ---
 = Restaure aplicativos usando o Trident Protect.
 :hardbreaks:
@@ -14,13 +14,13 @@ summary: Você pode usar o Trident Protect para restaurar seu aplicativo a parti
 
 
 [role="lead"]
-Você pode usar o Trident Protect para restaurar seu aplicativo a partir de um snapshot ou backup.  A restauração a partir de um snapshot existente será mais rápida ao restaurar o aplicativo no mesmo cluster.
+Você pode usar o Trident Protect para restaurar seu aplicativo a partir de um snapshot ou backup. A restauração a partir de um snapshot existente será mais rápida ao restaurar o aplicativo no mesmo cluster.
 
 [NOTE]
 ====
 * Ao restaurar um aplicativo, todos os ganchos de execução configurados para ele são restaurados juntamente com o aplicativo.  Se houver um gancho de execução pós-restauração, ele será executado automaticamente como parte da operação de restauração.
 * A restauração a partir de um backup para um namespace diferente ou para o namespace original é suportada para volumes qtree.  No entanto, a restauração a partir de um snapshot para um namespace diferente ou para o namespace original não é suportada para volumes qtree.
-* Você pode usar configurações avançadas para personalizar as operações de restauração. Para saber mais, consulte link:../trident-protect/trident-protect-restore-settings.html["Use as configurações avançadas de restauração do Trident Protect"].
+* Você pode usar configurações avançadas para personalizar as operações de restauração. Para saber mais, consulte link:../trident-protect/trident-protect-restore-settings.html["Utilize as configurações avançadas de restauração do Trident Protect."].
 
 
 ====
@@ -28,7 +28,7 @@ Você pode usar o Trident Protect para restaurar seu aplicativo a partir de um s
 
 == Restaurar a partir de um backup para um namespace diferente.
 
-Ao restaurar um backup para um namespace diferente usando um CR de BackupRestore, o Trident Protect restaura o aplicativo em um novo namespace e cria um CR de aplicativo para o aplicativo restaurado.  Para proteger a aplicação restaurada, crie backups ou snapshots sob demanda, ou estabeleça um cronograma de proteção.
+Ao restaurar um backup para um namespace diferente usando um CR de BackupRestore, o Trident Protect restaura o aplicativo em um novo namespace e cria um CR de aplicativo para o aplicativo restaurado. Para proteger a aplicação restaurada, crie backups ou snapshots sob demanda, ou estabeleça um cronograma de proteção.
 
 
 NOTE: Restaurar um backup para um namespace diferente, mantendo os recursos existentes, não alterará nenhum recurso que compartilhe o mesmo nome que os recursos do backup.  Para restaurar todos os recursos do backup, exclua e recrie o namespace de destino ou restaure o backup para um novo namespace.
@@ -41,7 +41,7 @@ Certifique-se de que o tempo de expiração do token de sessão da AWS seja sufi
 
 
 
-NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar.  Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident protect, consulte o comando.
+NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar. Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident Protect, consulte o comando.
 
 [role="tabbed-block"]
 ====
@@ -79,7 +79,7 @@ spec:
 . (Opcional) Se precisar selecionar apenas determinados recursos do aplicativo para restaurar, adicione filtros que incluam ou excluam recursos marcados com rótulos específicos:
 +
 
-NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona.  Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
+NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona. Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (Obrigatório para filtragem) Use `Include` ou `Exclude` Para incluir ou excluir um recurso definido em resourceMatchers.  Adicione os seguintes parâmetros resourceMatchers para definir os recursos a serem incluídos ou excluídos:
@@ -160,7 +160,7 @@ Certifique-se de que o tempo de expiração do token de sessão da AWS seja sufi
 
 
 
-NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar.  Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident protect, consulte o comando.
+NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar. Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident Protect, consulte o comando.
 
 [role="tabbed-block"]
 ====
@@ -199,7 +199,7 @@ spec:
 . (Opcional) Se precisar selecionar apenas determinados recursos do aplicativo para restaurar, adicione filtros que incluam ou excluam recursos marcados com rótulos específicos:
 +
 
-NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona.  Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
+NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona. Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (Obrigatório para filtragem) Use `Include` ou `Exclude` Para incluir ou excluir um recurso definido em resourceMatchers.  Adicione os seguintes parâmetros resourceMatchers para definir os recursos a serem incluídos ou excluídos:
@@ -272,14 +272,14 @@ tridentctl-protect create backupinplacerestore <my_restore_name> \
 Você pode restaurar um backup em um cluster diferente caso haja algum problema com o cluster original.
 
 
-NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar.  Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident protect, consulte o comando.
+NOTE: Ao restaurar backups usando o Kopia como o movimentador de dados, você pode, opcionalmente, especificar anotações no CR ou usar a CLI para controlar o comportamento do armazenamento temporário usado pelo Kopia. Consulte o https://kopia.io/docs/getting-started/["Documentação Kopia"^] Para obter mais informações sobre as opções que você pode configurar. Use o `tridentctl-protect create --help` Para obter mais informações sobre como especificar anotações com a CLI do Trident Protect, consulte o comando.
 
 .Antes de começar
 Certifique-se de que os seguintes pré-requisitos sejam atendidos:
 
 * O cluster de destino tem o Trident Protect instalado.
 * O cluster de destino tem acesso ao caminho do bucket do mesmo AppVault que o cluster de origem, onde o backup está armazenado.
-* Ao executar o AppVault CR, certifique-se de que seu ambiente local possa se conectar ao bucket de armazenamento de objetos definido nele. `tridentctl-protect get appvaultcontent` comando. Se restrições de rede impedirem o acesso, execute a CLI do Trident Protect de dentro de um pod no cluster de destino.
+* Ao executar o AppVault CR, certifique-se de que seu ambiente local possa se conectar ao bucket de armazenamento de objetos definido nele. `tridentctl-protect get appvaultcontent` comando. Caso as restrições de rede impeçam o acesso, execute a CLI do Trident Protect a partir de um pod no cluster de destino.
 * Certifique-se de que o tempo de expiração do token de sessão da AWS seja suficiente para quaisquer operações de restauração de longa duração.  Se o token expirar durante a operação de restauração, a operação poderá falhar.
 +
 ** Consulte o https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html["Documentação do AWS API"^] Para obter mais informações sobre como verificar a expiração do token de sessão atual.
@@ -289,7 +289,7 @@ Certifique-se de que os seguintes pré-requisitos sejam atendidos:
 
 
 .Passos
-. Verifique a disponibilidade do AppVault CR no cluster de destino usando o plugin Trident protect CLI:
+. Verifique a disponibilidade do AppVault CR no cluster de destino usando o plugin Trident Protect CLI:
 +
 [source, console]
 ----
@@ -395,7 +395,7 @@ tridentctl-protect create backuprestore <restore_name> \
 
 == Restaurar a partir de um snapshot para um namespace diferente.
 
-Você pode restaurar dados de um snapshot usando um arquivo de recurso personalizado (CR) para um namespace diferente ou para o namespace de origem original.  Ao restaurar um snapshot para um namespace diferente usando um CR SnapshotRestore, o Trident Protect restaura o aplicativo em um novo namespace e cria um CR para o aplicativo restaurado.  Para proteger a aplicação restaurada, crie backups ou snapshots sob demanda, ou estabeleça um cronograma de proteção.
+Você pode restaurar dados de um snapshot usando um arquivo de recurso personalizado (CR) para um namespace diferente ou para o namespace de origem original. Ao restaurar um snapshot para um namespace diferente usando um CR de SnapshotRestore, o Trident Protect restaura o aplicativo em um novo namespace e cria um CR de aplicativo para o aplicativo restaurado. Para proteger a aplicação restaurada, crie backups ou snapshots sob demanda, ou estabeleça um cronograma de proteção.
 
 
 NOTE: O SnapshotRestore é compatível com o `spec.storageClassMapping` atributo, mas somente quando as classes de armazenamento de origem e destino usam o mesmo backend de armazenamento.  Se você tentar restaurar para um `StorageClass` Se usar um sistema de armazenamento diferente, a operação de restauração falhará.
@@ -443,7 +443,7 @@ spec:
 . (Opcional) Se precisar selecionar apenas determinados recursos do aplicativo para restaurar, adicione filtros que incluam ou excluam recursos marcados com rótulos específicos:
 +
 
-NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona.  Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
+NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona. Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (Obrigatório para filtragem) Use `Include` ou `Exclude` Para incluir ou excluir um recurso definido em resourceMatchers.  Adicione os seguintes parâmetros resourceMatchers para definir os recursos a serem incluídos ou excluídos:
@@ -565,7 +565,7 @@ spec:
 . (Opcional) Se precisar selecionar apenas determinados recursos do aplicativo para restaurar, adicione filtros que incluam ou excluam recursos marcados com rótulos específicos:
 +
 
-NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona.  Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
+NOTE: O Trident Protect seleciona alguns recursos automaticamente devido à sua relação com recursos que você seleciona. Por exemplo, se você selecionar um recurso de reivindicação de volume persistente e ele tiver um pod associado, o Trident Protect também restaurará o pod associado.
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (Obrigatório para filtragem) Use `Include` ou `Exclude` Para incluir ou excluir um recurso definido em resourceMatchers.  Adicione os seguintes parâmetros resourceMatchers para definir os recursos a serem incluídos ou excluídos:

@@ -4,7 +4,7 @@ permalink: trident-protect/trident-protect-upgrade.html
 keywords: trident, protect, netapp, upgrade, new, version 
 summary: Você pode atualizar o Trident Protect para a versão mais recente para aproveitar os novos recursos ou correções de bugs. 
 ---
-= Melhore a proteção Trident
+= Aprimore o Trident Protect
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -32,7 +32,7 @@ Para atualizar o Trident Protect, siga os passos abaixo.
 ----
 helm repo update
 ----
-. Atualize os CRDs Trident Protect:
+. Atualize os CRDs do Trident Protect:
 +
 
 NOTE: Esta etapa é necessária se você estiver atualizando de uma versão anterior à 25.06, pois os CRDs agora estão incluídos no gráfico Helm do Trident Protect.
@@ -56,7 +56,7 @@ kubectl delete secret -n trident-protect -l name=trident-protect-crds,owner=helm
 ----
 
 
-. Melhore a proteção Trident :
+. Aprimore o Trident Protect:
 +
 [source, console]
 ----

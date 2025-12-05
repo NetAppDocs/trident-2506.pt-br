@@ -4,7 +4,7 @@ permalink: trident-protect/trident-protect-restore-settings.html
 keywords: trident, protect, restore, data, backup 
 summary: Você pode personalizar as operações de restauração do Trident Protect usando anotações, configurações de namespace e opções de armazenamento. 
 ---
-= Use as configurações avançadas de restauração do Trident Protect
+= Utilize as configurações avançadas de restauração do Trident Protect.
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -34,7 +34,7 @@ helm upgrade trident-protect --set restoreSkipNamespaceAnnotations=<annotation_k
 
 NOTE: Ao executar uma operação de restauração ou failover, quaisquer anotações e rótulos de namespace especificados em `restoreSkipNamespaceAnnotations` e `restoreSkipNamespaceLabels` são excluídos da operação de restauração ou failover. Certifique-se de que essas configurações sejam definidas durante a instalação inicial do Helm. Para saber mais, consulte link:../trident-protect/trident-protect-customize-installation.html#configure-autoSupport-and-namespace-filtering-options["Configurar opções de filtragem de namespace e AutoSupport"].
 
-Se você instalou o aplicativo de origem usando o Helm com o `--create-namespace` bandeira, tratamento especial é dado ao `name` Legenda da etiqueta.  Durante o processo de restauração ou failover, o Trident Protect copia esse rótulo para o namespace de destino, mas atualiza o valor para o valor do namespace de destino se o valor da origem corresponder ao namespace de origem.  Se esse valor não corresponder ao namespace de origem, ele será copiado para o namespace de destino sem alterações.
+Se você instalou o aplicativo de origem usando o Helm com o `--create-namespace` bandeira, tratamento especial é dado ao `name` Legenda da etiqueta. Durante o processo de restauração ou failover, o Trident Protect copia esse rótulo para o namespace de destino, mas atualiza o valor para o valor do namespace de destino se o valor da origem corresponder ao namespace de origem. Se esse valor não corresponder ao namespace de origem, ele será copiado para o namespace de destino sem alterações.
 
 
 
