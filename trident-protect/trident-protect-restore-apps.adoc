@@ -289,7 +289,7 @@ Certifique-se de que os seguintes pré-requisitos sejam atendidos:
 
 
 .Passos
-. Verifique a disponibilidade do AppVault CR no cluster de destino usando o plugin Trident Protect CLI:
+. Verifique se o AppVault CR existe no cluster de destino usando o plugin Trident Protect CLI:
 +
 [source, console]
 ----
@@ -297,9 +297,9 @@ tridentctl-protect get appvault --context <destination_cluster_name>
 ----
 +
 
-NOTE: Certifique-se de que o namespace destinado à restauração do aplicativo exista no cluster de destino.
+NOTE: Se o AppVault CR não existir no cluster de destino, crie-o seguindo os passos em link:trident-protect-appvault-custom-resources.html["Use objetos do Trident Protect AppVault para gerenciar buckets."].
 
-. Visualize o conteúdo de backup do AppVault disponível no cluster de destino:
+. Visualize o conteúdo do backup disponível do AppVault no cluster de destino e anote  `appArchivePath` do backup que deseja restaurar:
 +
 [source, console]
 ----
@@ -327,6 +327,9 @@ Executar este comando exibe os backups disponíveis no AppVault, incluindo seus 
 . Restaure o aplicativo no cluster de destino usando o nome do AppVault e o caminho do arquivo:
 
 
+
+NOTE: Ao usar uma CR, certifique-se de que o namespace destinado à restauração do aplicativo exista no cluster de destino.
+
 [role="tabbed-block"]
 ====
 .Use um CR
@@ -336,16 +339,7 @@ Executar este comando exibe os backups disponíveis no AppVault, incluindo seus 
 +
 ** *metadata.name*: (_Obrigatório_) O nome deste recurso personalizado; escolha um nome único e adequado ao seu ambiente.
 ** *spec.appVaultRef*: (_Obrigatório_) O nome do AppVault onde o conteúdo do backup está armazenado.
-** *spec.appArchivePath*: O caminho dentro do AppVault onde o conteúdo do backup é armazenado.  Você pode usar o seguinte comando para encontrar esse caminho:
-+
-[source, console]
-----
-kubectl get backups <BACKUP_NAME> -n my-app-namespace -o jsonpath='{.status.appArchivePath}'
-----
-+
-
-NOTE: Caso o BackupRestore CR não esteja disponível, você pode usar o comando mencionado na etapa 2 para visualizar o conteúdo do backup.
-
+** *spec.appArchivePath*: (_Obrigatório_) O caminho dentro do AppVault onde o conteúdo do backup está armazenado. Use o comando da etapa 2 para visualizar o conteúdo do backup e encontrar  `appArchivePath` o backup que deseja restaurar.
 ** *spec.namespaceMapping*: O mapeamento do namespace de origem da operação de restauração para o namespace de destino.  Substituir `my-source-namespace` e `my-destination-namespace` com informações do seu ambiente.
 +
 Por exemplo:
