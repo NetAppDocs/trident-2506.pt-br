@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: trident-get-started/kubernetes-deploy-operator.html 
+permalink: trident-install/kubernetes-deploy-operator.html 
 keywords: deploy, Trident, methods, operator, tridentctl, registry, registries 
 summary: Você pode implantar manualmente o operador Trident para instalar o Trident.  Este processo aplica-se a instalações onde as imagens de contêiner exigidas pelo Trident não estão armazenadas em um registro privado. 
 ---
@@ -38,10 +38,10 @@ Utilização de configuração sem multipathing ou utilização de `find_multipa
 
 == Implante manualmente o operador Trident e instale o Trident.
 
-Análiselink:../trident-get-started/kubernetes-deploy.html["visão geral da instalação"] Para garantir que você atendeu aos pré-requisitos de instalação e selecionou a opção de instalação correta para o seu ambiente.
+Revise link:../trident-install/kubernetes-deploy.html["visão geral da instalação"] para garantir que você atendeu aos pré-requisitos de instalação e selecionou a opção de instalação correta para o seu ambiente.
 
 .Antes de começar
-Antes de iniciar a instalação, faça login no host Linux e verifique se ele está gerenciando um sistema operacional em funcionamento.link:requirements.html["cluster Kubernetes suportado"^] e que você possui os privilégios necessários.
+Antes de iniciar a instalação, faça login no host Linux e verifique se ele está gerenciando um sistema operacional em funcionamento link:../trident-get-started/requirements.html["cluster Kubernetes suportado"] e se você possui os privilégios necessários.
 
 
 NOTE: Com o OpenShift, use `oc` em vez de `kubectl` Em todos os exemplos a seguir, faça login como *system:admin* primeiro executando o seguinte comando: `oc login -u system:admin` ou `oc login -u kube-admin` .
@@ -149,7 +149,7 @@ IMPORTANT: Deve haver apenas *uma instância* do operador em um cluster Kubernet
 
 === Passo 4: Crie o `TridentOrchestrator` e instalar o Trident
 
-Agora você pode criar o `TridentOrchestrator` e instale o Trident.  Opcionalmente, você podelink:kubernetes-customize-deploy.html["Personalize a sua instalação do Trident."] usando os atributos no `TridentOrchestrator` especificação.
+Agora você pode criar o `TridentOrchestrator` e instalar Trident. Opcionalmente, você pode link:../trident-install/kubernetes-customize-deploy.html["Personalize a sua instalação do Trident."] usando os atributos na `TridentOrchestrator` spec.
 
 [listing]
 ----

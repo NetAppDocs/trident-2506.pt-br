@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: trident-get-started/kubernetes-deploy.html 
+permalink: trident-install/kubernetes-deploy.html 
 keywords: deploy, Trident, methods, operator, tridentctl, helm, tanzu, vmware 
 summary: 'Você pode instalar o Trident usando o operador Trident (manualmente ou usando o Helm) ou com `tridentctl` .  Este tópico fornece informações importantes para selecionar o processo de instalação mais adequado para você.' 
 ---
@@ -40,7 +40,7 @@ Utilização de configuração sem multipathing ou utilização de `find_multipa
 
 Independentemente do método de instalação escolhido, você precisa ter:
 
-* Privilégios completos em um cluster Kubernetes compatível, executando uma versão compatível do Kubernetes e com os requisitos de recursos ativados.  Revise olink:requirements.html["requisitos"] para mais detalhes.
+* Privilégios completos em um cluster Kubernetes compatível, executando uma versão compatível do Kubernetes e com os requisitos de recursos ativados. Revise a link:../trident-get-started/requirements.html["requisitos"] para obter detalhes.
 * Acesso a um sistema de armazenamento NetApp compatível.
 * Capacidade de montar volumes a partir de todos os nós de trabalho do Kubernetes.
 * Um host Linux com `kubectl` (ou `oc` , caso esteja usando o OpenShift) instalado e configurado para gerenciar o cluster Kubernetes que você deseja usar.
@@ -56,13 +56,13 @@ TIP: Se você ainda não se familiarizou com olink:../trident-get-started/intro.
 
 == Escolha o seu método de instalação
 
-Selecione o método de instalação mais adequado para você.  Você também deve analisar as considerações paralink:kubernetes-deploy.html#move-between-installation-methods["alternando entre métodos"] antes de tomar sua decisão.
+Selecione o método de instalação mais adequado para você. Você também deve analisar as considerações para link:../trident-install/kubernetes-deploy.html#moving-between-installation-methods["alternando entre métodos"] antes de tomar sua decisão.
 
 
 
 === Usando o operador Trident
 
-Seja através da implantação manual ou utilizando o Helm, o operador Trident é uma ótima maneira de simplificar a instalação e gerenciar dinamicamente os recursos do Trident .  Você pode até mesmolink:../trident-get-started/kubernetes-customize-deploy.html["Personalize a implantação do seu operador Trident."] usando os atributos no `TridentOrchestrator` recurso personalizado (CR).
+Seja implantando manualmente ou usando o Helm, o operador Trident é uma ótima maneira de simplificar a instalação e gerenciar dinamicamente os recursos do Trident. Você pode até link:../trident-install/kubernetes-customize-deploy.html["Personalize a implantação do seu operador Trident."] usando os atributos no  `TridentOrchestrator` recurso personalizado (CR).
 
 As vantagens de usar o operador Trident incluem:
 
@@ -123,9 +123,9 @@ NOTE: Se o cluster for atualizado para uma versão não suportada, o operador im
 
 === Usando `tridentctl`
 
-Se você já possui uma implantação que precisa ser atualizada ou se deseja personalizar sua implantação ao máximo, considere... .  Este é o método convencional de implantação do Trident.
+Se você já possui uma implantação que precisa ser atualizada ou se deseja personalizar sua implantação ao máximo, você deve considerar . Este é o método convencional de implantação do Trident.
 
-Você pode para gerar os manifestos dos recursos Trident .  Isso inclui a implantação, o daemonset, a conta de serviço e a função de cluster que o Trident cria como parte de sua instalação.
+Você pode  gerar os manifestos para os recursos do Trident. Isso inclui a implantação, o daemonset, a conta de serviço e a função de cluster que Trident cria como parte de sua instalação.
 
 
 NOTE: A partir da versão 22.04, as chaves AES não serão mais regeneradas a cada instalação do Trident .  Com esta versão, o Trident instalará um novo objeto secreto que persistirá entre instalações.  Isso significa, `tridentctl` Na versão 22.04, é possível desinstalar versões anteriores do Trident, mas versões anteriores não podem desinstalar instalações da versão 22.04.  Selecione o método de instalação apropriado.
