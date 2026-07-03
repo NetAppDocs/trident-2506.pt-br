@@ -108,7 +108,7 @@ Nota de rodapé: SimNota de rodapé:1[]: Não gerenciado pelo Trident SimNota de
 
 === Drivers de back-end do Azure NetApp Files
 
-Trident usa o `azure-netapp-files` motorista para gerenciar olink:https://azure.microsoft.com/en-us/services/netapp/["Azure NetApp Files"^] serviço.
+Trident usa o  `azure-netapp-files` driver para gerenciar o serviço link:https://azure.microsoft.com/en-us/products/netapp/["Azure NetApp Files"^].
 
 Mais informações sobre este driver e como configurá-lo podem ser encontradas emlink:https://docs.netapp.com/us-en/trident/trident-use/anf.html["Configuração do backend Trident para Azure NetApp Files"^] .
 
