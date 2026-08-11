@@ -16,6 +16,7 @@ Usando o Trident, você pode criar um volume em um namespace primário e compart
 
 
 
+[[features]]
 == Características
 
 O CR TridentVolumeReference permite compartilhar com segurança volumes NFS ReadWriteMany (RWX) em um ou mais namespaces do Kubernetes.  Essa solução nativa do Kubernetes oferece os seguintes benefícios:
@@ -31,6 +32,7 @@ image::cross-namespace-sharing.png[Diagrama conceitual do compartilhamento entre
 
 
 
+[[quick-start]]
 == Início rápido
 
 Você pode configurar o compartilhamento de volumes NFS em apenas alguns passos.
@@ -53,6 +55,7 @@ O proprietário do namespace de destino cria o PVC subordinado para usar a fonte
 
 
 
+[[configure-the-source-and-destination-namespaces]]
 == Configure os namespaces de origem e destino.
 
 Para garantir a segurança, o compartilhamento entre namespaces exige colaboração e ação do proprietário do namespace de origem, do administrador do cluster e do proprietário do namespace de destino.  A função do usuário é definida em cada etapa.
@@ -133,12 +136,14 @@ Trident lê o `shareFromPVC` A anotação no PVC de destino cria o PV de destino
 
 
 
+[[delete-a-shared-volume]]
 == Excluir um volume compartilhado
 
 Você pode excluir um volume que é compartilhado entre vários namespaces.  O Trident removerá o acesso ao volume no namespace de origem e manterá o acesso para outros namespaces que compartilham o volume.  Quando todos os namespaces que fazem referência ao volume são removidos, o Trident exclui o volume.
 
 
 
+[[use-tridentctl-get-to-query-subordinate-volumes]]
 == Usar `tridentctl get` para consultar volumes subordinados
 
 Utilizando o [`tridentctl` utilitário, você pode executar o  `get` comando para obter volumes subordinados. Para mais informações, consulte link:../trident-managing-k8s/tridentctl.html[`tridentctl` comandos e opções].
@@ -157,6 +162,7 @@ Bandeiras:
 
 
 
+[[limitations]]
 == Limitações
 
 * O Trident não pode impedir que os namespaces de destino gravem no volume compartilhado.  Você deve usar bloqueio de arquivos ou outros processos para evitar a sobrescrita de dados em volumes compartilhados.
@@ -166,6 +172,7 @@ Bandeiras:
 
 
 
+[[for-more-information]]
 == Para maiores informações
 
 Para saber mais sobre acesso a volumes entre namespaces:

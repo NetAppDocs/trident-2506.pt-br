@@ -16,6 +16,7 @@ Você pode importar volumes de armazenamento existentes como um PV do Kubernetes
 
 
 
+[[overview-and-considerations]]
 == Visão geral e considerações
 
 Você pode importar um volume para o Trident para:
@@ -52,6 +53,7 @@ TIP: Essa opção é útil se você deseja usar o Kubernetes para cargas de trab
 
 
 
+[[import-a-volume]]
 == Importar um volume
 
 Você pode importar um volume usando  `tridentctl import` ou criando um PVC com anotações de importação do Trident.
@@ -147,12 +149,14 @@ Trident importará automaticamente o volume e o vinculará ao PVC.
 ====
 
 
+[[examples]]
 == Exemplos
 
 Consulte os exemplos de importação de volume a seguir para obter informações sobre os drivers compatíveis.
 
 
 
+[[ontap-nas-and-ontap-nas-flexgroup]]
 === ONTAP NAS e ONTAP NAS FlexGroup
 
 O Trident suporta a importação de volumes usando o `ontap-nas` e `ontap-nas-flexgroup` motoristas.
@@ -260,6 +264,7 @@ spec:
 ====
 
 
+[[ontap-san]]
 === ONTAP SAN
 
 O Trident suporta importação de volume usando o `ontap-san` (iSCSI, NVMe/TCP e FC) e `ontap-san-economy` motoristas.
@@ -312,6 +317,7 @@ image:./san-import-igroup.png["Imagem de LUNS mapeada para iqn e cluster iqn."]
 ====
 
 
+[[element]]
 === Elemento
 
 O Trident oferece suporte ao software NetApp Element e à importação de volumes NetApp HCI usando o `solidfire-san` motorista.
@@ -333,6 +339,7 @@ tridentctl import volume element_default element-managed -f pvc-basic-import.yam
 ----
 
 
+[[google-cloud-platform]]
 === Plataforma Google Cloud
 
 O Trident suporta a importação de volumes usando o `gcp-cvs` motorista.
@@ -355,6 +362,7 @@ tridentctl import volume gcpcvs_YEppr adroit-jolly-swift -f <path-to-pvc-file> -
 ----
 
 
+[[azure-netapp-files]]
 === Azure NetApp Files
 
 O Trident suporta a importação de volumes usando o `azure-netapp-files` motorista.
@@ -376,6 +384,7 @@ tridentctl import volume azurenetappfiles_40517 importvol1 -f <path-to-pvc-file>
 ----
 
 
+[[google-cloud-netapp-volumes]]
 === Google Cloud NetApp Volumes
 
 O Trident suporta a importação de volumes usando o `google-cloud-netapp-volumes` motorista.

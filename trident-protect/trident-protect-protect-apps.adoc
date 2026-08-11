@@ -21,6 +21,7 @@ NOTE: Você pode configurar o Trident Protect para congelar e descongelar sistem
 
 
 
+[[create-an-on-demand-snapshot]]
 == Criar um instantâneo sob demanda
 
 Você pode criar um instantâneo sob demanda a qualquer momento.
@@ -85,6 +86,7 @@ tridentctl-protect create snapshot <my_snapshot_name> --appvault <my_appvault_na
 ====
 
 
+[[create-an-on-demand-backup]]
 == Crie um backup sob demanda
 
 Você pode fazer backup de um aplicativo a qualquer momento.
@@ -172,6 +174,7 @@ Você pode usar opcionalmente o `--full-backup` Sinalizador para especificar se 
 ====
 
 
+[[create-a-data-protection-schedule]]
 == Crie um cronograma de proteção de dados
 
 Uma política de proteção protege um aplicativo criando instantâneos, backups ou ambos em um cronograma definido. Você pode optar por criar snapshots e backups por hora, dia, semana e mês, e pode especificar o número de cópias a serem mantidas. Você pode agendar um backup completo não incremental usando a anotação full-backup-rule. Por padrão, todos os backups são incrementais. Executar um backup completo periodicamente, juntamente com backups incrementais entre eles, ajuda a reduzir o risco associado às restaurações.
@@ -297,6 +300,7 @@ Para agendamentos somente de instantâneo, defina `--backup-retention 0` e espec
 ====
 
 
+[[delete-a-snapshot]]
 == Excluir um instantâneo
 
 Exclua os snapshots agendados ou sob demanda que você não precisa mais.
@@ -312,6 +316,7 @@ kubectl delete snapshot <snapshot_name> -n my-app-namespace
 
 
 
+[[delete-a-backup]]
 == Excluir um backup
 
 Exclua os backups agendados ou sob demanda que você não precisa mais.
@@ -330,6 +335,7 @@ kubectl delete backup <backup_name> -n my-app-namespace
 
 
 
+[[check-the-status-of-a-backup-operation]]
 == Verifique o status de uma operação de backup.
 
 Você pode usar a linha de comando para verificar o status de uma operação de backup que está em andamento, foi concluída ou falhou.
@@ -345,6 +351,7 @@ kubectl get backup -n <namespace_name> <my_backup_cr_name> -o jsonpath='{.status
 
 
 
+[[enable-backup-and-restore-for-azure-netapp-files-anf-operations]]
 == Habilitar backup e restauração para operações do Azure NetApp Files (ANF)
 
 Se você instalou o Trident Protect, pode habilitar a funcionalidade de backup e restauração com uso eficiente de espaço para back-ends de armazenamento que utilizam a classe de armazenamento azure-netapp-files e foram criados antes do Trident 24.06. Essa funcionalidade opera com volumes NFSv4 e não consome espaço adicional do pool de capacidade.

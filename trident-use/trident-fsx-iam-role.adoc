@@ -19,6 +19,7 @@ NOTE: Para autenticar usando uma função do AWS IAM, você precisa ter um clust
 
 
 
+[[create-aws-secrets-manager-secret]]
 == Criar segredo do AWS Secrets Manager
 
 Como o Trident emitirá APIs contra um servidor virtual FSx para gerenciar o armazenamento para você, ele precisará de credenciais para fazer isso.  A forma segura de transmitir essas credenciais é por meio de um segredo do AWS Secrets Manager.  Portanto, se você ainda não possui uma, precisará criar um segredo do AWS Secrets Manager que contenha as credenciais da conta vsadmin.
@@ -32,6 +33,7 @@ aws secretsmanager create-secret --name trident-secret --description "Trident CS
 ----
 
 
+[[create-iam-policy]]
 == Criar política de IAM
 
 O Trident também precisa de permissões da AWS para funcionar corretamente.  Portanto, você precisa criar uma política que conceda ao Trident as permissões necessárias.
@@ -75,6 +77,7 @@ aws iam create-policy --policy-name AmazonFSxNCSIDriverPolicy --policy-document 
 ----
 
 
+[[create-pod-identity-or-iam-role-for-service-account-association-irsa]]
 === Criar identidade de Pod ou função IAM para associação de conta de serviço (IRSA)
 
 Você pode configurar uma conta de serviço do Kubernetes para assumir uma função do AWS Identity and Access Management (IAM) com a Identidade do Pod do EKS ou a função do IAM para associação de conta de serviço (IRSA).  Qualquer Pod configurado para usar a conta de serviço poderá acessar qualquer serviço da AWS para o qual a função tenha permissões de acesso.

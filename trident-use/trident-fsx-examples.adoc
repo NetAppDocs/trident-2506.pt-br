@@ -16,6 +16,7 @@ Saiba mais sobre as opções de configuração de backend para o Amazon FSx para
 
 
 
+[[backend-configuration-options]]
 == Opções de configuração do backend
 
 Consulte a tabela a seguir para obter as opções de configuração do backend:
@@ -108,6 +109,7 @@ Consulte a tabela a seguir para obter as opções de configuração do backend:
 |===
 
 
+[[update-datalif-after-initial-configuration]]
 === Atualizar `dataLIF` após a configuração inicial
 
 Você pode alterar o dataLIF após a configuração inicial executando o seguinte comando para fornecer ao novo arquivo JSON de backend o dataLIF atualizado.
@@ -121,6 +123,7 @@ NOTE: Se os PVCs estiverem conectados a um ou mais pods, você deve desligar tod
 
 
 
+[[backend-configuration-options-for-provisioning-volumes]]
 == Opções de configuração de backend para provisionamento de volumes
 
 Você pode controlar o provisionamento padrão usando essas opções em `defaults` seção da configuração.  Para ver um exemplo, consulte os exemplos de configuração abaixo.
@@ -167,6 +170,7 @@ Você pode controlar o provisionamento padrão usando essas opções em `default
 |===
 
 
+[[example-configurations]]
 == Configurações de exemplo
 
 .Configuração da classe de armazenamento para volumes SMB

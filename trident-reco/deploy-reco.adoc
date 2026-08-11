@@ -16,6 +16,7 @@ Utilize as recomendações listadas aqui ao implantar o Trident.
 
 
 
+[[deploy-to-a-dedicated-namespace]]
 == Implantar em um namespace dedicado
 
 https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/["Espaços de nomes"^]Proporcionam separação administrativa entre diferentes aplicações e constituem uma barreira ao compartilhamento de recursos.  Por exemplo, um PVC de um namespace não pode ser consumido por outro.  O Trident fornece recursos PV para todos os namespaces no cluster Kubernetes e, consequentemente, utiliza uma conta de serviço com privilégios elevados.
@@ -24,6 +25,7 @@ Além disso, o acesso ao módulo Trident pode permitir que um usuário acesse cr
 
 
 
+[[use-quotas-and-range-limits-to-control-storage-consumption]]
 == Utilize quotas e limites de intervalo para controlar o consumo de armazenamento.
 
 O Kubernetes possui duas funcionalidades que, quando combinadas, fornecem um mecanismo poderoso para limitar o consumo de recursos pelas aplicações.  O https://kubernetes.io/docs/concepts/policy/resource-quotas/#storage-resource-quota["mecanismo de cota de armazenamento"^] Permite ao administrador implementar limites globais e específicos da classe de armazenamento para o consumo de capacidade e contagem de objetos por namespace.  Além disso, usando um https://kubernetes.io/docs/tasks/administer-cluster/limit-storage-consumption/#limitrange-to-limit-requests-for-storage["limite de alcance"^] Garante que as solicitações de PVC estejam dentro de um valor mínimo e máximo antes de serem encaminhadas ao provisionador.

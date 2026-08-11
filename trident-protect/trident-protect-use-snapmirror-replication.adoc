@@ -18,6 +18,7 @@ Com o Trident Protect, você pode usar os recursos de replicação assíncrona d
 
 
 
+[[namespace-annotations-and-labels-during-restore-and-failover-operations]]
 == Anotações e rótulos de namespace durante operações de restauração e failover
 
 Durante as operações de restauração e failover, os rótulos e anotações no namespace de destino são ajustados para corresponder aos rótulos e anotações no namespace de origem.  Rótulos ou anotações do namespace de origem que não existem no namespace de destino são adicionados, e quaisquer rótulos ou anotações já existentes são sobrescritos para corresponder ao valor do namespace de origem.  Rótulos ou anotações que existem apenas no espaço de nomes de destino permanecem inalterados.
@@ -38,6 +39,7 @@ Se você instalou o aplicativo de origem usando o Helm com o `--create-namespace
 
 
 
+[[example]]
 === Exemplo
 
 O exemplo a seguir apresenta um namespace de origem e um de destino, cada um com anotações e rótulos diferentes.  É possível visualizar o estado do namespace de destino antes e depois da operação, bem como a forma como as anotações e os rótulos são combinados ou sobrescritos no namespace de destino.
@@ -103,6 +105,7 @@ NOTE: Você pode configurar o Trident Protect para congelar e descongelar sistem
 
 
 
+[[execution-hooks-during-failover-and-reverse-operations]]
 == Ganchos de execução durante operações de failover e reversão
 
 Ao usar o relacionamento AppMirror para proteger seu aplicativo, existem comportamentos específicos relacionados aos ganchos de execução que você deve conhecer durante operações de failover e reversão.
@@ -115,6 +118,7 @@ Para saber mais sobre ganchos de execução, consultelink:../trident-protect/tri
 
 
 
+[[set-up-a-replication-relationship]]
 == Estabeleça uma relação de replicação.
 
 A configuração de uma relação de replicação envolve o seguinte:
@@ -446,6 +450,7 @@ kubectl get amr -n my-app-namespace <relationship name> -o=jsonpath='{.status}' 
 
 
 
+[[fail-over-to-destination-cluster]]
 === Failover para o cluster de destino
 
 Com o Trident Protect, você pode realizar o failover de aplicativos replicados para um cluster de destino. Este procedimento interrompe a relação de replicação e coloca o aplicativo online no cluster de destino. O Trident Protect não interrompe o aplicativo no cluster de origem se ele estiver operacional.
@@ -470,6 +475,7 @@ kubectl get amr -n my-app-namespace <relationship name> -o=jsonpath='{.status}' 
 
 
 
+[[resync-a-failed-over-replication-relationship]]
 === Ressincronizar uma relação de replicação que falhou
 
 A operação de ressincronização restabelece a relação de replicação.  Após a execução de uma operação de ressincronização, o aplicativo de origem original torna-se o aplicativo em execução e quaisquer alterações feitas no aplicativo em execução no cluster de destino são descartadas.
@@ -494,6 +500,7 @@ kubectl apply -f trident-protect-relationship.yaml -n my-app-namespace
 
 
 
+[[reverse-resync-a-failed-over-replication-relationship]]
 === Reverter a resincronização de uma relação de replicação que falhou
 
 Ao reverter a resincronização de uma relação de replicação que falhou, o aplicativo de destino torna-se o aplicativo de origem e a origem torna-se o destino.  As alterações feitas no aplicativo de destino durante o failover são mantidas.
@@ -507,6 +514,7 @@ Ao reverter a resincronização de uma relação de replicação que falhou, o a
 
 
 
+[[reverse-application-replication-direction]]
 == Direção de replicação inversa do aplicativo
 
 Ao inverter a direção da replicação, o Trident Protect move a aplicação para o backend de armazenamento de destino, enquanto continua a replicar de volta para o backend de armazenamento de origem original. O Trident Protect interrompe o aplicativo de origem e replica os dados para o destino antes de realizar o failover para o aplicativo de destino.
@@ -593,6 +601,7 @@ NOTE: Na etapa 2 do procedimento de failover, inclua o `spec.promotedSnapshot` N
 
 
 
+[[result]]
 === Resultado
 
 As seguintes ações ocorrem devido à replicação reversa:
@@ -607,6 +616,7 @@ As seguintes ações ocorrem devido à replicação reversa:
 
 
 
+[[fail-back-applications-to-the-original-source-cluster]]
 === Restaurar aplicativos para o cluster de origem original.
 
 Utilizando o Trident Protect, você pode realizar o "failback" após uma operação de failover seguindo a seguinte sequência de operações. Nesse fluxo de trabalho para restaurar a direção de replicação original, o Trident Protect replica (ressincroniza) quaisquer alterações do aplicativo de volta para o aplicativo de origem original antes de inverter a direção da replicação.
@@ -629,6 +639,7 @@ CAUTION: Não execute uma operação de ressincronização normal, pois isso des
 
 
 
+[[delete-a-replication-relationship]]
 === Excluir uma relação de replicação
 
 Você pode excluir uma relação de replicação a qualquer momento.  Ao excluir a relação de replicação do aplicativo, o resultado são dois aplicativos separados, sem nenhuma relação entre eles.

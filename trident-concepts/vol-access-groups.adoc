@@ -19,6 +19,7 @@ NOTE: Ignore esta seção se estiver usando o CHAP, que é recomendado para simp
 
 
 
+[[learn-about-volume-access-groups]]
 == Saiba mais sobre grupos de acesso por volume
 
 O Trident pode usar grupos de acesso a volumes para controlar o acesso aos volumes que provisiona.  Se o CHAP estiver desativado, espera-se encontrar um grupo de acesso chamado `trident` a menos que você especifique um ou mais IDs de grupo de acesso na configuração.

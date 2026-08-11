@@ -16,6 +16,7 @@ Antes de configurar o backend do Google Cloud NetApp Volumes , você precisa gar
 
 
 
+[[prerequisites-for-nfs-volumes]]
 == Pré-requisitos para volumes NFS
 
 Se você estiver usando o Google Cloud NetApp Volumes pela primeira vez ou em um novo local, será necessária alguma configuração inicial para configurar o Google Cloud NetApp Volumes e criar um volume NFS. Consultelink:https://cloud.google.com/netapp/volumes/docs/before-you-begin/application-resilience["Antes de começar"^] .

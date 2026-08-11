@@ -16,12 +16,14 @@ O portfólio de produtos de armazenamento da NetApp integra-se a diversos aspect
 
 
 
+[[trident]]
 == Trident
 
 https://docs.netapp.com/us-en/trident/["Trident"^]Facilita para as empresas o gerenciamento, a proteção e a movimentação de suas cargas de trabalho conteinerizadas e ricas em dados, executadas no Kubernetes, dentro e entre nuvens públicas e ambientes locais.  O Trident provisiona e fornece armazenamento persistente de contêineres usando o Trident, proveniente do portfólio de armazenamento comprovado e abrangente da NetApp, tanto na nuvem pública quanto em infraestruturas locais.  Ele também oferece um conjunto abrangente de funcionalidades avançadas de gerenciamento de dados com reconhecimento de aplicativos, como snapshots, backup e restauração, logs de atividades e clonagem ativa para proteção de dados, recuperação de desastres/dados, auditoria de dados e casos de uso de migração para cargas de trabalho do Kubernetes.
 
 
 
+[[ontap]]
 == ONTAP
 
 O ONTAP é o sistema operacional de armazenamento unificado e multiprotocolo da NetApp que oferece recursos avançados de gerenciamento de dados para qualquer aplicação.  Os sistemas ONTAP possuem configurações totalmente em flash, híbridas ou totalmente em HDD e oferecem diversos modelos de implantação, incluindo hardware projetado (FAS e AFF), white-box (ONTAP Select) e somente em nuvem (Cloud Volumes ONTAP).
@@ -31,24 +33,28 @@ NOTE: O Trident é compatível com todos os modelos de implantação ONTAP menci
 
 
 
+[[cloud-volumes-ontap]]
 == Cloud Volumes ONTAP
 
 Cloud Volumes ONTAP é um dispositivo de storage somente de software que executa o software de gerenciamento de dados ONTAP na nuvem. Você pode usar Cloud Volumes ONTAP para cargas de trabalho de produção, recuperação de desastres, DevOps, compartilhamento de arquivos e gerenciamento de banco de dados. Ele estende o armazenamento corporativo para a nuvem, oferecendo eficiências de storage, alta disponibilidade, replicação de dados, hierarquização de dados e consistência de aplicativos.
 
 
 
+[[amazon-fsx-for-netapp-ontap]]
 == Amazon FSx for NetApp ONTAP
 
 https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/what-is-fsx-ontap.html["Amazon FSx for NetApp ONTAP"^]É um serviço AWS totalmente gerenciado que permite iniciar e executar sistemas de arquivos com tecnologia do sistema operacional de armazenamento NetApp ONTAP .  O FSx para ONTAP permite que você aproveite os recursos, o desempenho e as capacidades administrativas da NetApp com os quais você já está familiarizado, ao mesmo tempo que tira proveito da simplicidade, agilidade, segurança e escalabilidade do armazenamento de dados na AWS.  O FSx para ONTAP oferece suporte a muitos dos recursos do sistema de arquivos ONTAP e às APIs de administração.
 
 
 
+[[element-software]]
 == Software Element
 
 https://www.netapp.com/data-management/element-software/["Elemento"^]Permite ao administrador de armazenamento consolidar cargas de trabalho, garantindo o desempenho e possibilitando uma infraestrutura de armazenamento simplificada e otimizada.  Em conjunto com uma API que permite a automação de todos os aspectos da gestão de armazenamento, o Element possibilita que os administradores de armazenamento façam mais com menos esforço.
 
 
 
+[[netapp-hci]]
 == NetApp HCI
 
 https://www.netapp.com/virtual-desktop-infrastructure/netapp-hci/["NetApp HCI"^]Simplifica a gestão e a escalabilidade do centro de dados, automatizando tarefas rotineiras e permitindo que os administradores de infraestrutura se concentrem em funções mais importantes.
@@ -57,12 +63,14 @@ A NetApp HCI é totalmente compatível com o Trident.  O Trident pode provisiona
 
 
 
+[[azure-netapp-files]]
 == Azure NetApp Files
 
 https://azure.microsoft.com/en-us/products/netapp/["Azure NetApp Files"^] é um serviço de compartilhamento de arquivos do Azure de nível empresarial, desenvolvido com tecnologia NetApp. Você pode executar suas cargas de trabalho baseadas em arquivos mais exigentes nativamente no Azure, com o desempenho e o gerenciamento de rich data que você espera da NetApp.
 
 
 
+[[google-cloud-netapp-volumes]]
 == Google Cloud NetApp Volumes
 
 https://www.netapp.com/google-cloud/netapp-volumes/["Google Cloud NetApp Volumes"^] é um serviço de arquivos nativo da nuvem que fornece volumes NAS sobre NFS com desempenho all-flash. Esse serviço permite que qualquer carga de trabalho, incluindo aplicativos legados, seja executada na nuvem do GCP. Ele oferece um serviço totalmente gerenciado que proporciona alto desempenho consistente, clonagem instantânea, proteção de dados e acesso seguro a instâncias do Google Compute Engine (GCE).

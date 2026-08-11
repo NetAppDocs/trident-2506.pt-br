@@ -19,6 +19,7 @@ NOTE: VolumeGroupSnapshot é um recurso beta do Kubernetes com APIs beta.  O Kub
 
 
 
+[[create-volume-group-snapshots]]
 == Criar snapshots de grupos de volumes
 
 O snapshot do grupo de volumes é compatível com o `ontap-san` Driver compatível apenas com o protocolo iSCSI, ainda não suportado com Fibre Channel (FCP) nem NVMe/TCP.  Antes de começar
@@ -95,6 +96,7 @@ spec:
 ----
 
 
+[[recover-volume-data-using-a-group-snapshot]]
 == Recupere dados de volume usando um instantâneo de grupo.
 
 Você pode restaurar Volumes Persistentes individuais usando os snapshots individuais que foram criados como parte do Snapshot do Grupo de Volumes.  Não é possível recuperar o Snapshot do Grupo de Volumes como uma unidade.
@@ -110,6 +112,7 @@ NOTE: Ao restaurar uma cópia de snapshot, a configuração de volume existente 
 
 
 
+[[in-place-volume-restoration-from-a-snapshot]]
 == Restauração de volume in-place a partir de um snapshot
 
 O Trident proporciona restauração de volume rápida e in situ a partir de uma imagem instantânea usando o `TridentActionSnapshotRestore` (TASR) CR.  Essa solicitação de configuração (CR) funciona como uma ação imperativa do Kubernetes e não persiste após a conclusão da operação.
@@ -118,6 +121,7 @@ Para mais informações, consulte link:../trident-use/vol-snapshots.html#in-plac
 
 
 
+[[delete-a-pv-with-associated-group-snapshots]]
 == Excluir um PV com snapshots de grupo associados
 
 Ao excluir um instantâneo de volume de grupo:
@@ -129,6 +133,7 @@ Ao excluir um instantâneo de volume de grupo:
 
 
 
+[[deploy-a-volume-snapshot-controller]]
 == Implante um controlador de instantâneo de volume
 
 Se a sua distribuição Kubernetes não incluir o controlador de snapshots e os CRDs, você pode implantá-los da seguinte forma.
@@ -168,6 +173,7 @@ NOTE: Se necessário, abra `deploy/kubernetes/snapshot-controller/rbac-snapshot-
 
 
 
+[[related-links]]
 == Links relacionados
 
 * link:../trident-reference/objects.html#kubernetes-volumegroupsnapshotclass-objects["VolumeGroupSnapshotClass"]
